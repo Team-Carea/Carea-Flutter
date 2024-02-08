@@ -27,7 +27,7 @@ class _AddPostState extends State<AddPost> {
           actions: [
             IconButton(
               onPressed: () {
-                context.go('/newest');
+                context.pop();
               },
               icon: const Icon(Icons.check, color: Colors.black),
             )

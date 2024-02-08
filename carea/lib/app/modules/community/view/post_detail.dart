@@ -2,7 +2,6 @@ import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class PostDetail extends StatefulWidget {
   const PostDetail({super.key});

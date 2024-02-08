@@ -2,7 +2,6 @@ import 'package:carea/app/common/component/progress_bar.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class MypageScreen extends StatelessWidget {
   const MypageScreen({Key? key}) : super(key: key);
