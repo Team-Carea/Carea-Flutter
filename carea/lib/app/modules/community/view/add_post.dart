@@ -33,7 +33,6 @@ class _AddPostState extends State<AddPost> {
             )
           ],
           centerTitle: true,
-          backgroundColor: AppColors.greenPrimaryColor,
           elevation: 0,
         ),
         body: DefaultLayout(

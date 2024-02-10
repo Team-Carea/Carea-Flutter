@@ -25,7 +25,6 @@ class _PostDetailState extends State<PostDetail> {
           style: TextStyle(color: Colors.black),
         ),
         centerTitle: true,
-        backgroundColor: AppColors.greenPrimaryColor,
         elevation: 0,
         actions: [
           IconButton(

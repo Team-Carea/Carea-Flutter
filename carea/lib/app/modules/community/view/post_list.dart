@@ -52,7 +52,6 @@ class _PostListScreenState extends State<PostListScreen> {
             icon: const Icon(Icons.search),
           )
         ],
-        backgroundColor: AppColors.greenPrimaryColor,
         elevation: 0,
       ),
       body: DefaultLayout(

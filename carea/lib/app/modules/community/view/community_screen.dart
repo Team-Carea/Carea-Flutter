@@ -37,7 +37,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
               },
               icon: const Icon(Icons.person_2_outlined))
         ],
-        backgroundColor: AppColors.greenPrimaryColor,
         elevation: 0,
       ),
       body: DefaultLayout(
