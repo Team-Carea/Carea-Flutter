@@ -1,7 +1,6 @@
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddPost extends StatefulWidget {
@@ -26,9 +25,7 @@ class _AddPostState extends State<AddPost> {
           ),
           actions: [
             IconButton(
-              onPressed: () {
-                context.pop();
-              },
+              onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.check, color: Colors.black),
             )
           ],
@@ -42,7 +39,7 @@ class _AddPostState extends State<AddPost> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 600,
+                      width: 350,
                       child: TextField(
                         textInputAction: TextInputAction.done,
                         decoration: InputDecoration(
@@ -69,7 +66,7 @@ class _AddPostState extends State<AddPost> {
                     ),
                     const SizedBox(height: 30),
                     SizedBox(
-                      width: 600,
+                      width: 350,
                       height: 600,
                       child: Container(
                         decoration: BoxDecoration(
@@ -99,7 +96,7 @@ class _AddPostState extends State<AddPost> {
                     Row(
                       children: [
                         const SizedBox(
-                          width: 120,
+                          width: 20,
                         ),
                         IconButton(
                           onPressed: () async {

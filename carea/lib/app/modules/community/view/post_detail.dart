@@ -1,10 +1,11 @@
 import 'package:carea/app/common/const/app_colors.dart';
-import 'package:carea/app/common/layout/default_layout.dart';
+import "package:carea/app/common/layout/default_layout.dart";
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PostDetail extends StatefulWidget {
-  const PostDetail({super.key});
+  const PostDetail({super.key, required this.pageTitle});
+  final String pageTitle;
 
   @override
   State<PostDetail> createState() => _PostDetailState();
@@ -20,9 +21,9 @@ class _PostDetailState extends State<PostDetail> {
           icon: const Icon(Icons.keyboard_arrow_left_outlined,
               color: Colors.black),
         ),
-        title: const Text(
-          '최신글',
-          style: TextStyle(color: Colors.black),
+        title: Text(
+          widget.pageTitle,
+          style: const TextStyle(color: Colors.black),
         ),
         centerTitle: true,
         elevation: 0,
@@ -55,7 +56,7 @@ class _PostDetailState extends State<PostDetail> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        'author',
+                        '캐리아짱',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
@@ -68,17 +69,20 @@ class _PostDetailState extends State<PostDetail> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'title',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              const Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  '안녕 얘들아 ~~~~',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
               ),
-              const SizedBox(height: 10),
               const Divider(),
-              const SizedBox(height: 10),
-              const Text(
-                'content',
-                style: TextStyle(fontSize: 18),
+              const Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  '이건 게시글 내용이얌~~~',
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
               const Divider(),
               Row(
@@ -138,7 +142,7 @@ class _PostDetailState extends State<PostDetail> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
                   border: Border.all(
-                    color: Colors.grey, // 네모난 박스 테두리 색상 설정
+                    color: Colors.grey,
                   ),
                 ),
                 child: Row(
@@ -161,6 +165,7 @@ class _PostDetailState extends State<PostDetail> {
                     Material(
                       type: MaterialType.transparency,
                       child: Ink(
+                        width: 40,
                         decoration: const ShapeDecoration(
                           color: AppColors.greenPrimaryColor,
                           shape: CircleBorder(),

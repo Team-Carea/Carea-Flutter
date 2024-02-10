@@ -63,7 +63,10 @@ class _PostListScreenState extends State<PostListScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const PostDetail()),
+                    MaterialPageRoute(
+                        builder: (context) => PostDetail(
+                              pageTitle: widget.pageTitle,
+                            )),
                   );
                 },
                 child: Column(

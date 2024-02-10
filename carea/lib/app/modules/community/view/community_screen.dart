@@ -3,7 +3,6 @@ import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/modules/community/view/post_list.dart';
 import 'package:carea/app/modules/user/view/mypage_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/component/category.dart';
 
 class CommunityScreen extends StatefulWidget {
