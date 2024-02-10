@@ -6,6 +6,8 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:uuid/uuid.dart';
 
+import '../../confirm_help/view/confirm_help_screen.dart';
+
 class ChatRoomScreen extends StatefulWidget {
   const ChatRoomScreen({super.key});
 
@@ -29,7 +31,45 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String titleName = chatRoomService.user2.firstName!;
+
     return DefaultLayout(
+      appbar: AppBar(
+        centerTitle: true,
+        title: Text(titleName),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width * 0.05),
+            child: ElevatedButton(
+              onPressed: () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => const ConfirmHelpScreen(),
+                //   ),
+                // );
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: AppColors.black,
+                backgroundColor: AppColors.yellowPrimaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: EdgeInsets.zero,
+              ).copyWith(
+                padding: MaterialStateProperty.all(
+                    const EdgeInsets.symmetric(horizontal: 8)),
+              ),
+              child: const Text('도움 인증'),
+            ),
+          ),
+        ],
+      ),
       child: Chat(
         messages: chatRoomService.messages,
         onSendPressed: _handleSendPressed,

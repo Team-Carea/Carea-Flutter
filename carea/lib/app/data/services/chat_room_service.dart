@@ -11,7 +11,7 @@ class ChatRoomService {
   );
   final user2 = const types.User(
     id: '2', // 상대방의 id
-    firstName: '상대방 이름',
+    firstName: '지니신',
   );
   bool isLoading = false;
   late WebSocketChannel channel;
