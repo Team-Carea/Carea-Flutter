@@ -1,10 +1,9 @@
-import 'package:carea/app/common/component/chat_manager.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
+import 'package:carea/app/data/services/chat_room_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatRoomScreen extends StatefulWidget {
@@ -15,34 +14,60 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  bool isLoading = false;
-  final ChatManager chatManager = ChatManager();
+  final ChatRoomService chatRoomService = ChatRoomService();
+
+  @override
+  void initState() {
+    super.initState();
+    // chatRoomService.initializeWebsocket();
+    // 웹소켓을 통해 서버로부터의 이벤트 수신 대기
+    // chatRoomService.channel.stream.listen((event) {
+    //   chatRoomService.onMessageReceived(event);
+    //   setState(() {});
+    // });
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
       child: Chat(
-        messages: chatManager.messages,
-        onAttachmentPressed: _handleAttachmentPressed,
+        messages: chatRoomService.messages,
         onSendPressed: _handleSendPressed,
-        showUserAvatars: true,
-        showUserNames: true,
-        user: chatManager.user,
+        // showUserNames: true, // 메시지마다 username 보이지 않게 수정
+        user: chatRoomService.user1,
         theme: const DefaultChatTheme(
-          backgroundColor: Colors.black,
+          primaryColor: AppColors.greenPrimaryColor,
+          secondaryColor: AppColors.faintGray,
+          inputBackgroundColor: AppColors.lightBlueGray,
+          inputTextColor: AppColors.black,
+          backgroundColor: AppColors.white,
           inputBorderRadius: BorderRadius.zero,
-          receivedMessageBodyTextStyle: TextStyle(color: Colors.white),
-          secondaryColor: AppColors.bluePrimaryColor,
+          receivedMessageBodyTextStyle: TextStyle(color: Colors.black),
+          // 보낸 메시지 스타일
+          sentMessageBodyTextStyle: TextStyle(
+            color: AppColors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            height: 1.5,
+          ),
           attachmentButtonIcon: Icon(
             Icons.camera_alt,
             color: Colors.white,
           ),
-          inputBackgroundColor: AppColors.lightGray,
           seenIcon: Text(
             'read',
             style: TextStyle(
               fontSize: 10.0,
             ),
+          ),
+          // 모든 user들의 이름 색상을 검은색으로 설정
+          userAvatarNameColors: [
+            Colors.black,
+          ],
+          userNameTextStyle: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w300,
+            height: 1.333,
           ),
         ),
       ),
@@ -50,75 +75,16 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   }
 
   void _handleSendPressed(types.PartialText message) {
-    if (!isLoading) {
+    if (!chatRoomService.isLoading) {
       final textMessage = types.TextMessage(
-        author: chatManager.user,
+        author: chatRoomService.user1,
         createdAt: DateTime.now().millisecondsSinceEpoch,
         id: const Uuid().v4(), // 각 메시지의 id
         text: message.text,
       );
 
-      chatManager.addMessage(textMessage);
-    }
-  }
-
-  void _handleAttachmentPressed() {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) => SafeArea(
-        child: SizedBox(
-          height: 144,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _handleImageSelection();
-                },
-                child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text('Photo'),
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text('Cancel'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // 채팅으로 사진 보낼 경우
-  void _handleImageSelection() async {
-    final result = await ImagePicker().pickImage(
-      imageQuality: 70,
-      maxWidth: 1440,
-      source: ImageSource.gallery,
-    );
-
-    if (result != null) {
-      final bytes = await result.readAsBytes();
-      final image = await decodeImageFromList(bytes);
-
-      final message = types.ImageMessage(
-        author: chatManager.user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        height: image.height.toDouble(),
-        id: const Uuid().v4(),
-        name: result.name,
-        size: bytes.length,
-        uri: result.path,
-        width: image.width.toDouble(),
-      );
-
-      chatManager.addMessage(message);
+      chatRoomService.addMessage(textMessage);
+      setState(() {});
     }
   }
 }
