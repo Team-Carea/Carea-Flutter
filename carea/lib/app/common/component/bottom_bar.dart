@@ -31,12 +31,12 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
       initialIndex: widget.initialTab.index,
       vsync: this,
     );
-    _tabController.addListener(_handleTabSelection); // 탭 변경을 감지하기 위해 리스너 추가
+    _tabController.addListener(_handleTabSelection);
   }
 
   void _handleTabSelection() {
     if (!_tabController.indexIsChanging) {
-      setState(() {}); // 탭이 변경될 때마다 UI 갱신
+      setState(() {});
     }
   }
 
@@ -85,7 +85,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
   }
 
   void _onTabTapped(int index) {
-    _tabController.animateTo(index); // 탭이 클릭되면 해당 인덱스로 애니메이션 처리
+    _tabController.animateTo(index);
   }
 
   @override
