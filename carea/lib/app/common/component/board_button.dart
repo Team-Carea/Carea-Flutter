@@ -13,15 +13,12 @@ class BoardButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-
     return Column(
       children: [
         const SizedBox(height: 30),
         SizedBox(
-          height: height * 0.1,
-          width: width * 0.8,
+          height: 80,
+          width: 350,
           child: OutlinedButton(
             onPressed: onPressed,
             style: OutlinedButton.styleFrom(
