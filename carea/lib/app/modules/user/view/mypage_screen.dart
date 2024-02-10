@@ -10,10 +10,8 @@ class MypageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text('내 정보'),
-        ),
-        backgroundColor: AppColors.greenPrimaryColor,
+        title: const Text('내 정보'),
+        centerTitle: true,
         elevation: 0,
       ),
       body: const DefaultLayout(
@@ -124,15 +122,3 @@ class SettingButton extends StatelessWidget {
         ));
   }
 }
-
-// Widget imageprofile() {
-//   return const Center(
-//     child: Stack(
-//       children: <Widget>[
-//         CircleAvatar(
-//             radius: 80,
-//             backgroundImage: AssetImage('asset/svg/icon/defaultprofile.svg')),
-//       ],
-//     ),
-//   );
-// }
