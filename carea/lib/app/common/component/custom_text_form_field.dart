@@ -19,33 +19,34 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const baseBorder = OutlineInputBorder(
+    const baseBorder = UnderlineInputBorder(
       borderSide: BorderSide(
-        color: AppColors.faintGray,
+        color: AppColors.lightGray,
         width: 1.0,
       ),
     );
 
     return TextFormField(
-      cursorColor: AppColors.greenPrimaryColor,
+      cursorColor: AppColors.darkGreenPrimaryColor,
       obscureText: obscureText,
+      obscuringCharacter: '●',
       autofocus: autofocus,
       onChanged: onChanged,
       decoration: InputDecoration(
-        contentPadding: const EdgeInsets.all(20),
+        contentPadding: const EdgeInsets.all(12),
         hintText: hintText,
         errorText: errorText,
         hintStyle: const TextStyle(
-          color: AppColors.darkGray,
+          color: AppColors.middleGray,
           fontSize: 14.0,
         ),
-        fillColor: AppColors.extraLightGray,
-        filled: true,
+        fillColor: AppColors.inputBgColor,
+        filled: false,
         border: baseBorder,
         enabledBorder: baseBorder,
         focusedBorder: baseBorder.copyWith(
           borderSide: baseBorder.borderSide.copyWith(
-            color: AppColors.greenPrimaryColor,
+            color: AppColors.darkGreenPrimaryColor,
           ),
         ),
       ),
