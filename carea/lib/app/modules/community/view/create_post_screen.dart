@@ -3,15 +3,15 @@ import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddPost extends StatefulWidget {
+class CreatePostScreen extends StatefulWidget {
   final String pageTitle;
-  const AddPost({Key? key, this.pageTitle = ''}) : super(key: key);
+  const CreatePostScreen({Key? key, this.pageTitle = ''}) : super(key: key);
 
   @override
-  State<AddPost> createState() => _AddPostState();
+  State<CreatePostScreen> createState() => _CreatePostScreenState();
 }
 
-class _AddPostState extends State<AddPost> {
+class _CreatePostScreenState extends State<CreatePostScreen> {
   String? _selectedCategory;
 
   @override
@@ -80,8 +80,8 @@ class _AddPostState extends State<AddPost> {
                             child: Text('생활'),
                           ),
                           DropdownMenuItem<String>(
-                            value: '자유',
-                            child: Text('자유'),
+                            value: '자유 게시판',
+                            child: Text('자유 게시판'),
                           ),
                         ],
                         onChanged: (value) {

@@ -198,7 +198,7 @@ class _PostDetailState extends State<PostDetail> {
                     ),
                   );
                 },
-              ),
+              ), // 댓글 입력 박스 고정 + body만 scrollview로 변경 필요
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
