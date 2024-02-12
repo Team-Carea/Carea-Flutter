@@ -1,7 +1,7 @@
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
-import 'package:carea/app/modules/community/view/add_post.dart';
-import 'package:carea/app/modules/community/view/post_detail.dart';
+import 'package:carea/app/modules/community/view/create_post_screen.dart';
+import 'package:carea/app/modules/community/view/post_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:carea/app/common/component/category.dart';
 
@@ -125,7 +125,7 @@ class _PostListScreenState extends State<PostListScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddPost()),
+            MaterialPageRoute(builder: (context) => const CreatePostScreen()),
           );
         },
         backgroundColor: AppColors.greenPrimaryColor,

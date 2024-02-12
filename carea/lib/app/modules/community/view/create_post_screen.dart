@@ -13,8 +13,24 @@ class AddPost extends StatefulWidget {
 
 class _AddPostState extends State<AddPost> {
   String? _selectedCategory;
+
   @override
   Widget build(BuildContext context) {
+    String? currentRoute = ModalRoute.of(context)!.settings.name;
+    switch (currentRoute) {
+      case '/posts/economic':
+        _selectedCategory = '경제/금융';
+        break;
+      case '/posts/future':
+        _selectedCategory = '진로';
+        break;
+      case '/posts/life':
+        _selectedCategory = '생활';
+        break;
+      case '/posts/free':
+        _selectedCategory = '자유';
+        break;
+    }
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -39,45 +55,44 @@ class _AddPostState extends State<AddPost> {
             child: Form(
               child: Column(
                 children: [
-                  if (widget.pageTitle != '최신글')
-                    Row(
-                      children: [
-                        const SizedBox(
-                          width: 30,
+                  Row(
+                    children: [
+                      const SizedBox(
+                        width: 30,
+                      ),
+                      DropdownButton<String>(
+                        underline: Container(
+                          height: 0.5,
+                          color: AppColors.lightGray,
                         ),
-                        DropdownButton<String>(
-                          underline: Container(
-                            height: 0.5,
-                            color: AppColors.lightGray,
+                        value: _selectedCategory,
+                        items: const [
+                          DropdownMenuItem<String>(
+                            value: '경제/금융',
+                            child: Text('경제/금융'),
                           ),
-                          value: _selectedCategory,
-                          items: const [
-                            DropdownMenuItem<String>(
-                              value: '경제/금융',
-                              child: Text('경제/금융'),
-                            ),
-                            DropdownMenuItem<String>(
-                              value: '진로',
-                              child: Text('진로'),
-                            ),
-                            DropdownMenuItem<String>(
-                              value: '생활',
-                              child: Text('생활'),
-                            ),
-                            DropdownMenuItem<String>(
-                              value: '자유',
-                              child: Text('자유'),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedCategory = value;
-                            });
-                          },
-                          hint: const Text('카테고리'),
-                        ),
-                      ],
-                    ),
+                          DropdownMenuItem<String>(
+                            value: '진로',
+                            child: Text('진로'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: '생활',
+                            child: Text('생활'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: '자유',
+                            child: Text('자유'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedCategory = value;
+                          });
+                        },
+                        hint: const Text('카테고리'),
+                      ),
+                    ],
+                  ),
                   Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
