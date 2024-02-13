@@ -1,9 +1,10 @@
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
-import 'package:carea/app/modules/nearhelp/view/check_near_screen.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:carea/app/modules/nearhelp/controller/nearhelp_controller.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
+import 'package:carea/app/modules/nearhelp/controller/google_map_controller.dart';
 
 class NearhelpScreen extends StatefulWidget {
   const NearhelpScreen({super.key});
@@ -13,6 +14,26 @@ class NearhelpScreen extends StatefulWidget {
 }
 
 class _NearhelpScreenState extends State<NearhelpScreen> {
+  late GoogleMapController mapController;
+  late LocationService locationService;
+  LatLng? userLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    locationService = LocationService();
+    _getUserLocation();
+  }
+
+  Future<void> _getUserLocation() async {
+    var locationData = await locationService.getCurrentLocation();
+    if (locationData != null) {
+      setState(() {
+        userLocation = LatLng(locationData.latitude!, locationData.longitude!);
+      });
+    } else {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,13 +41,18 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
       appBar: AppBar(
         title: const Text('도움찾기'),
       ),
-      body: const DefaultLayout(
+      body: DefaultLayout(
         child: GoogleMap(
-          initialCameraPosition:
-              CameraPosition(target: LatLng(31.4354354, 27.4534565)),
+          initialCameraPosition: CameraPosition(
+            target: userLocation ?? const LatLng(37.5465, 126.9648), // 기본 위치
+            zoom: 17,
+          ),
           mapType: MapType.normal,
           myLocationEnabled: true,
           myLocationButtonEnabled: true, //사용자 위치 중앙으로 가져오는 버튼
+          onMapCreated: (GoogleMapController controller) {
+            mapController = controller;
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -136,12 +162,13 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
                         ElevatedButton(
                           onPressed: () {
                             // 도움 등록 API 전에 UI 확인을 위해 임시적으로 도움찾기 확인하는 UI 연결!!
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const NearHelpCheck();
-                              },
-                            );
+                            // showDialog(
+                            //   context: context,
+                            //   builder: (BuildContext context) {
+                            //     return const NearHelpCheck();
+                            //   },
+                            // );
+                            sendPostRequest();
                           },
                           child: const Text('등록하기',
                               selectionColor: AppColors.greenPrimaryColor),
