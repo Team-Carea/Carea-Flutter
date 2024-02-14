@@ -1,3 +1,4 @@
+import 'package:carea/app/common/const/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -26,10 +27,16 @@ class _ExpBarState extends State<ExpBar> {
             percent: exp,
             center: const Text("50.0%"),
             linearGradient: const LinearGradient(
-              colors: <Color>[Color(0xffB07BE6), Color(0xff5BA2E0)],
+              colors: <Color>[
+                AppColors.extraLightGray,
+                AppColors.bluePrimaryColor
+              ],
             ),
             linearGradientBackgroundColor: const LinearGradient(
-              colors: <Color>[Color(0xffe5d6fa), Color(0xffc8dff8)],
+              colors: <Color>[
+                AppColors.extraLightGray,
+                AppColors.bluePrimaryColor
+              ],
             ),
           ),
         ],

@@ -1,5 +1,5 @@
 import 'package:carea/app/modules/chat/view/chat_list_screen.dart';
-import 'package:carea/app/modules/community/view/add_post.dart';
+import 'package:carea/app/modules/community/view/create_post_screen.dart';
 import 'package:carea/app/modules/community/view/community_screen.dart';
 import 'package:carea/app/modules/nearhelp/view/nearhelp_screen.dart';
 import 'package:carea/app/modules/user/view/mypage_screen.dart';
@@ -16,7 +16,7 @@ final GoRouter router = GoRouter(
       routes: [
         GoRoute(
           path: '/addpost',
-          builder: (context, state) => const AddPost(),
+          builder: (context, state) => const CreatePostScreen(),
         ),
       ],
     ),

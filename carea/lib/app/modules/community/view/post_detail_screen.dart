@@ -1,17 +1,21 @@
+import 'package:carea/app/common/component/category.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import "package:carea/app/common/layout/default_layout.dart";
+import 'package:carea/app/modules/community/controller/community_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PostDetail extends StatefulWidget {
-  const PostDetail({super.key, required this.pageTitle});
+  const PostDetail({super.key, required this.pageTitle, this.comment});
   final String pageTitle;
+  final String? comment;
 
   @override
   State<PostDetail> createState() => _PostDetailState();
 }
 
 class _PostDetailState extends State<PostDetail> {
+  List<Comment> comments = generateDummyComments();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +47,9 @@ class _PostDetailState extends State<PostDetail> {
               const Row(
                 children: [
                   SizedBox(
+                    width: 5,
+                  ),
+                  SizedBox(
                     width: 80,
                     height: 80,
                     child: CircleAvatar(
@@ -51,9 +58,9 @@ class _PostDetailState extends State<PostDetail> {
                       radius: 20,
                     ),
                   ),
-                  SizedBox(width: 10),
+                  SizedBox(width: 20),
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         '캐리아짱',
@@ -73,7 +80,7 @@ class _PostDetailState extends State<PostDetail> {
                 padding: EdgeInsets.all(10.0),
                 child: Text(
                   '안녕 얘들아 ~~~~',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               ),
               const Divider(),
@@ -138,6 +145,60 @@ class _PostDetailState extends State<PostDetail> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: comments.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final comment = comments[index];
+
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    padding: const EdgeInsets.all(12.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 20.0,
+                          backgroundImage:
+                              NetworkImage(comment.profileImageUrl),
+                        ),
+                        const SizedBox(width: 12.0),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              comment.authorName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            const SizedBox(height: 4.0),
+                            Text(
+                              comment.content,
+                              style: const TextStyle(fontSize: 14.0),
+                            ),
+                            const SizedBox(height: 4.0),
+                            Text(
+                              comment.timestamp.toString(),
+                              // API 연동 시 created_at으로 변경
+                              style: const TextStyle(
+                                fontSize: 12.0,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ), // 댓글 입력 박스 고정 + body만 scrollview로 변경 필요
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
@@ -153,6 +214,9 @@ class _PostDetailState extends State<PostDetail> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 3.0, horizontal: 8.0),
                         child: TextFormField(
+                          onChanged: (value) {
+                            setState(() {});
+                          },
                           decoration: const InputDecoration(
                             hintText: '댓글을 입력해주세요',
                             border: InputBorder.none,
@@ -176,9 +240,7 @@ class _PostDetailState extends State<PostDetail> {
                             Icons.send,
                             color: Colors.white,
                           ),
-                          onPressed: () {
-                            // 댓글 등록 API
-                          },
+                          onPressed: () {},
                         ),
                       ),
                     ),
