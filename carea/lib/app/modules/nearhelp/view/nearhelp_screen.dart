@@ -1,6 +1,6 @@
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
-import 'package:carea/app/modules/nearhelp/controller/nearhelp_controller.dart';
+import 'package:carea/app/modules/nearhelp/view/check_near_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
@@ -162,13 +162,12 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
                         ElevatedButton(
                           onPressed: () {
                             // 도움 등록 API 전에 UI 확인을 위해 임시적으로 도움찾기 확인하는 UI 연결!!
-                            // showDialog(
-                            //   context: context,
-                            //   builder: (BuildContext context) {
-                            //     return const NearHelpCheck();
-                            //   },
-                            // );
-                            sendPostRequest();
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const NearHelpCheck();
+                              },
+                            );
                           },
                           child: const Text('등록하기',
                               selectionColor: AppColors.greenPrimaryColor),
