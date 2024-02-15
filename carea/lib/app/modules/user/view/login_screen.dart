@@ -4,6 +4,8 @@ import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
+import 'package:carea/app/common/util/layout_utils.dart';
+import 'package:carea/app/modules/user/view/join_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -35,9 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(height: MediaQuery.of(context).size.width * 0.06),
+                SizedBox(height: getScreenWidth(context) * 0.06),
                 _Title(),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.08),
+                SizedBox(height: getScreenWidth(context) * 0.08),
                 const Text(
                   '이메일',
                   style: inputTitleTextStyle,
@@ -48,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     email = value;
                   },
                 ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.04),
+                SizedBox(height: getScreenWidth(context) * 0.04),
                 const Text(
                   '비밀번호',
                   style: inputTitleTextStyle,
@@ -60,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   obscureText: true,
                 ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.08),
+                SizedBox(height: getScreenWidth(context) * 0.08),
                 CustomElevatedButton(
                   text: '로그인',
                   screenRoute: () async {
@@ -82,10 +84,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     //     .push(MaterialPageRoute(builder: (_) => RootTab()));
                   },
                 ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.01),
+                SizedBox(height: getScreenWidth(context) * 0.01),
                 CustomTextButton(
                   text: '아직 회원이 아니신가요? 회원가입',
-                  screenRoute: () {},
+                  screenRoute: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const JoinScreen()));
+                  },
                 ),
               ],
             ),
@@ -104,9 +109,9 @@ class _Title extends StatelessWidget {
       children: [
         SvgPicture.asset(
           'asset/svg/carea_logo.svg',
-          width: MediaQuery.of(context).size.width / 5 * 2,
+          width: getScreenWidth(context) / 5 * 2,
         ),
-        SizedBox(height: MediaQuery.of(context).size.width * 0.04),
+        SizedBox(height: getScreenWidth(context) * 0.04),
         const Text(
           "Hello!\nThis is",
           style: titleTextStyle,
