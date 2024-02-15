@@ -12,10 +12,20 @@ const careaTitleTextStyle = TextStyle(
   color: AppColors.pinkLogoColor,
 );
 
+const joinTitleTextStyle = TextStyle(
+  fontSize: 32,
+  fontWeight: FontWeight.w600,
+);
+
 const inputTitleTextStyle = TextStyle(
   fontSize: 20,
   fontWeight: FontWeight.w400,
   color: AppColors.darkGreenPrimaryColor,
+);
+
+const descriptionTextStyle = TextStyle(
+  fontSize: 14,
+  fontWeight: FontWeight.w400,
 );
 
 const elevatedBtnTextStyle = TextStyle(
