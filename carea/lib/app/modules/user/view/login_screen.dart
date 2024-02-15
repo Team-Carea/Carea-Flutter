@@ -1,15 +1,27 @@
 import 'package:carea/app/common/component/custom_button.dart';
 import 'package:carea/app/common/component/custom_text_form_field.dart';
+import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:dio/dio.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  String email = '';
+  String password = '';
+
+  @override
   Widget build(BuildContext context) {
+    final dio = Dio();
+
     return DefaultLayout(
       child: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -29,8 +41,10 @@ class LoginScreen extends StatelessWidget {
                   style: inputTitleTextStyle,
                 ),
                 CustomTextFormField(
-                  onChanged: (String value) {},
                   hintText: '이메일을 입력해주세요',
+                  onChanged: (String value) {
+                    email = value;
+                  },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.04),
                 const Text(
@@ -38,14 +52,23 @@ class LoginScreen extends StatelessWidget {
                   style: inputTitleTextStyle,
                 ),
                 CustomTextFormField(
-                  onChanged: (String value) {},
                   hintText: '비밀번호를 입력해주세요',
+                  onChanged: (String value) {
+                    password = value;
+                  },
                   obscureText: true,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.08),
                 CustomElevatedButton(
                   text: '로그인',
-                  screenRoute: () {},
+                  screenRoute: () async {
+                    // 로그인 요청
+                    // 테스트 유저 정보: {"email": "careleaver@gmail.com", "password": "carealeaver123"}
+                    final response = await dio.post(
+                      'http://${AppConfig.localHost}/users/login/',
+                      data: {"email": email, "password": password},
+                    );
+                  },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.01),
                 CustomTextButton(
