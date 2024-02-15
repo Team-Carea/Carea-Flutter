@@ -3,6 +3,8 @@ import 'package:carea/app/common/component/custom_text_form_field.dart';
 import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
+import 'package:carea/app/common/util/auth_storage.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:dio/dio.dart';
@@ -68,6 +70,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       'http://${AppConfig.localHost}/users/login/',
                       data: {"email": email, "password": password},
                     );
+
+                    final accessToken = response.data['access'];
+                    final refreshToken = response.data['refresh'];
+
+                    AuthStorage.saveAccessToken(accessToken);
+                    AuthStorage.saveRefreshToken(refreshToken);
+
+                    // 정상 로그인 -> RootTab 이동
+                    // Navigator.of(context)
+                    //     .push(MaterialPageRoute(builder: (_) => RootTab()));
                   },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.01),
