@@ -1,10 +1,12 @@
 import 'package:carea/app/common/component/custom_button.dart';
 import 'package:carea/app/common/component/custom_text_form_field.dart';
 import 'package:carea/app/common/const/app_colors.dart';
+import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class JoinScreen extends StatefulWidget {
@@ -15,8 +17,15 @@ class JoinScreen extends StatefulWidget {
 }
 
 class _JoinScreenState extends State<JoinScreen> {
+  String nickname = '';
+  String introduction = '';
+  String email = '';
+  String password = '';
+
   @override
   Widget build(BuildContext context) {
+    final dio = Dio();
+
     return DefaultLayout(
       child: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -28,6 +37,7 @@ class _JoinScreenState extends State<JoinScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: getScreenWidth(context) * 0.06),
                 _Title(),
                 SizedBox(height: getScreenWidth(context) * 0.2),
                 const Text(
@@ -36,7 +46,9 @@ class _JoinScreenState extends State<JoinScreen> {
                 ),
                 CustomTextFormField(
                   hintText: '닉네임을 입력해주세요',
-                  onChanged: (String value) {},
+                  onChanged: (String value) {
+                    nickname = value;
+                  },
                 ),
                 SizedBox(height: getScreenWidth(context) * 0.04),
                 const Text(
@@ -45,7 +57,9 @@ class _JoinScreenState extends State<JoinScreen> {
                 ),
                 CustomTextFormField(
                   hintText: '자기소개를 입력해주세요',
-                  onChanged: (String value) {},
+                  onChanged: (String value) {
+                    introduction = value;
+                  },
                 ),
                 SizedBox(height: getScreenWidth(context) * 0.04),
                 const Text(
@@ -54,7 +68,9 @@ class _JoinScreenState extends State<JoinScreen> {
                 ),
                 CustomTextFormField(
                   hintText: '이메일을 입력해주세요',
-                  onChanged: (String value) {},
+                  onChanged: (String value) {
+                    email = value;
+                  },
                 ),
                 SizedBox(height: getScreenWidth(context) * 0.04),
                 const Text(
@@ -63,13 +79,40 @@ class _JoinScreenState extends State<JoinScreen> {
                 ),
                 CustomTextFormField(
                   hintText: '비밀번호를 입력해주세요',
-                  onChanged: (String value) {},
+                  onChanged: (String value) {
+                    password = value;
+                  },
                   obscureText: true,
                 ),
                 SizedBox(height: getScreenWidth(context) * 0.08),
                 CustomElevatedButton(
                   text: '회원 가입하기',
-                  screenRoute: () async {},
+                  screenRoute: () async {
+                    // 회원가입 요청
+                    // test data
+                    final response = await dio.post(
+                      'http://${AppConfig.localHost}/users/registration/',
+                      data: {
+                        "email": "jiny@gmail.com",
+                        "password1": "carealeaver123",
+                        "password2": "carealeaver123",
+                        "nickname": "지니신",
+                        "profile_url":
+                            "https://storage.googleapis.com/carea/profile-imgs/careleaver.jpeg", // 필수 아님
+                        "introduction": "저는 금융지식에 관심이 많아요." // 필수 아님
+                      },
+                    );
+
+                    final accessToken = response.data['access'];
+                    final refreshToken = response.data['refresh'];
+
+                    AuthStorage.saveAccessToken(accessToken);
+                    AuthStorage.saveRefreshToken(refreshToken);
+
+                    // 정상 회원가입 -> RootTab 이동
+                    // Navigator.of(context)
+                    //     .push(MaterialPageRoute(builder: (_) => RootTab()));
+                  },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.01),
               ],
