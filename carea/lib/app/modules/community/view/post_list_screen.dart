@@ -3,16 +3,7 @@ import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/modules/community/view/create_post_screen.dart';
 import 'package:carea/app/modules/community/view/post_detail_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:carea/app/common/component/category.dart';
-
-class Post {
-  final String title;
-  final String content;
-  final String timestamp;
-  final String author;
-
-  Post(this.title, this.content, this.timestamp, this.author);
-}
+import 'package:carea/app/modules/community/controller/community_controller.dart';
 
 class PostListScreen extends StatefulWidget {
   final String pageTitle;
@@ -24,18 +15,25 @@ class PostListScreen extends StatefulWidget {
 }
 
 class _PostListScreenState extends State<PostListScreen> {
-  final List<Post> posts = List.generate(
-    15,
-    (index) => Post(
-      "게시글 ${index + 1}",
-      "게시글 내용입니다.",
-      '00:00',
-      '젤리',
-    ),
-  );
+  final Posts _posts = Posts();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPosts();
+  }
+
+  Future<void> _fetchPosts() async {
+    List<String> categories = ['latest', 'free', 'life', 'economic', 'future'];
+    await _posts.fetchAndSetPosts('$categories');
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final post = _posts.items;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -57,7 +55,7 @@ class _PostListScreenState extends State<PostListScreen> {
       body: DefaultLayout(
         child: ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          itemCount: posts.length,
+          itemCount: _posts.items.length,
           itemBuilder: (BuildContext context, int index) {
             return InkWell(
                 onTap: () {
@@ -73,7 +71,7 @@ class _PostListScreenState extends State<PostListScreen> {
                   children: [
                     ListTile(
                       title: Text(
-                        posts[index].title,
+                        post[index].title,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -84,7 +82,7 @@ class _PostListScreenState extends State<PostListScreen> {
                         children: [
                           const SizedBox(height: 10),
                           Text(
-                            posts[index].content,
+                            post[index].content,
                             style: const TextStyle(fontSize: 16),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -94,14 +92,14 @@ class _PostListScreenState extends State<PostListScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                posts[index].timestamp,
+                                post[index].created_at,
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey,
                                 ),
                               ),
                               Text(
-                                posts[index].author,
+                                post[index].nickname,
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey,
