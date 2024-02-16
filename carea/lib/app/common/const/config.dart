@@ -15,5 +15,6 @@ class AppConfig {
 
   static const timeout = Duration(seconds: 5);
   static const splashTime = Duration(seconds: 2);
-  static const String token = 'authToken';
+  static const String accessTokenKey = 'access';
+  static const String refreshTokenKey = 'refresh';
 }
