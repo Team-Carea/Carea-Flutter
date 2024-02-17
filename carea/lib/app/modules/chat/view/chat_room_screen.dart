@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:uuid/uuid.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../confirm_help/view/confirm_help_screen.dart';
 
@@ -21,12 +22,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   @override
   void initState() {
     super.initState();
-    // chatRoomService.initializeWebsocket();
+    chatRoomService.initializeWebsocket();
     // 웹소켓을 통해 서버로부터의 이벤트 수신 대기
-    // chatRoomService.channel.stream.listen((event) {
-    //   chatRoomService.onMessageReceived(event);
-    //   setState(() {});
-    // });
+    chatRoomService.channel.stream.listen((event) {
+      chatRoomService.onMessageReceived(event);
+      setState(() {});
+    });
   }
 
   @override
@@ -115,16 +116,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   }
 
   void _handleSendPressed(types.PartialText message) {
-    if (!chatRoomService.isLoading) {
-      final textMessage = types.TextMessage(
-        author: chatRoomService.user1,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: const Uuid().v4(), // 각 메시지의 id
-        text: message.text,
-      );
+    final textMessage = types.TextMessage(
+      author: chatRoomService.user1,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      id: const Uuid().v4(), // 각 메시지의 id
+      text: message.text,
+    );
 
-      chatRoomService.addMessage(textMessage);
-      setState(() {});
-    }
+    chatRoomService.addMessage(textMessage);
+    setState(() {});
   }
 }

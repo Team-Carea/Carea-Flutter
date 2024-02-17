@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:carea/app/common/const/config.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:uuid/uuid.dart';
@@ -7,26 +9,33 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 class ChatRoomService {
   final List<types.Message> messages = [];
   final user1 = const types.User(
-    id: '1', // 나의 id
+    id: '2', // 나의 id
   );
   final user2 = const types.User(
-    id: '2', // 상대방의 id
+    id: '3', // 상대방의 id
     firstName: '지니신',
   );
   bool isLoading = false;
   late WebSocketChannel channel;
-  final String roomId = '';
+  final String roomId = '1'; // 임시 채팅방 Id
 
   // 웹소켓 연결 초기화
   void initializeWebsocket() {
     channel = IOWebSocketChannel.connect(
-        'ws://${AppConfig.localHost}${AppConfig.chatRoomUrl}/$roomId');
+        'ws://${AppConfig.localHost}${AppConfig.chatRoomUrl}/$roomId/');
   }
 
   void addMessage(types.Message message) {
     messages.insert(0, message); // 화면 맨 아래에 메시지 추가
     isLoading = true;
     if (message is types.TextMessage) {
+      // 문제점: 백엔드가 원하는 형태로 보내주지 않음
+      final messagePayload = jsonEncode({
+        'user_id': user1.id,
+        'message': message.text,
+      });
+
+      channel.sink.add(messagePayload);
       // channel.sink.add(message.text); // 메시지를 백엔드(웹소켓 서버)로 전송
       messages.insert(
         0,
