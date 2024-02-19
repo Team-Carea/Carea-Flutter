@@ -1,4 +1,4 @@
-import 'package:carea/app/modules/chat/view/chat_list_screen.dart';
+import 'package:carea/app/modules/chat/view/chat_room_list_screen.dart';
 import 'package:carea/app/modules/community/view/create_post_screen.dart';
 import 'package:carea/app/modules/community/view/community_screen.dart';
 import 'package:carea/app/modules/nearhelp/view/nearhelp_screen.dart';
@@ -22,7 +22,7 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/chatlist',
-      builder: (context, state) => const ChatlistScreen(),
+      builder: (context, state) => const ChatRoomListScreen(),
     ),
     GoRoute(
       path: '/nearhelp',
