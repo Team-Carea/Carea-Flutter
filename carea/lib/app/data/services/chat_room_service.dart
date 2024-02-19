@@ -4,7 +4,7 @@ import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class ChatRoomService {
+class ChatService {
   final List<types.Message> messages = [];
   final user1 = const types.User(
     id: '1', // 나의 id

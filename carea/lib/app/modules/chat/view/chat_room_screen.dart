@@ -18,7 +18,7 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  final ChatRoomService chatRoomService = ChatRoomService();
+  final ChatService chatRoomService = ChatService();
 
   @override
   void initState() {
