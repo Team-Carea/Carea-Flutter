@@ -1,4 +1,4 @@
-import 'package:carea/app/data/services/chat_room_list_service.dart';
+import 'package:carea/app/data/services/chat_room_service.dart';
 
 class ChatRoomController {
   final ChatRoomService _chatRoomService = ChatRoomService();
