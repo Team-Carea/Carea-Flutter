@@ -22,11 +22,11 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // 현재 라우트를 pop하여 이전 화면으로 돌아가기
+            Navigator.pop(context);
           },
         ),
         title: const Text('도움 인증'),
-        centerTitle: true, // 타이틀을 중앙에 배치
+        centerTitle: true,
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -62,7 +62,7 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
             const SizedBox(height: 12),
             CustomElevatedButton(
               text: '전송하기',
-              screenRoute: () => showSuccessConfirmDialog(context),
+              screenRoute: () => showLevelUpDialog(context),
               icon: Icons.send,
             )
           ],

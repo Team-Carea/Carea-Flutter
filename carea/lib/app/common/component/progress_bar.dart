@@ -4,15 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class ExpBar extends StatefulWidget {
-  const ExpBar({Key? key}) : super(key: key);
+  final double exp;
+  const ExpBar({Key? key, required this.exp}) : super(key: key);
 
   @override
   State<ExpBar> createState() => _ExpBarState();
 }
 
 class _ExpBarState extends State<ExpBar> {
-  double exp = 0.5;
   String userID = '';
+  late String percentText;
+
+  @override
+  void initState() {
+    super.initState();
+    percentText = '${(widget.exp * 100).toStringAsFixed(0)}%';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +32,8 @@ class _ExpBarState extends State<ExpBar> {
             animation: true,
             lineHeight: 20,
             animationDuration: 1000,
-            percent: exp,
-            center: const Text("50.0%"),
+            percent: widget.exp,
+            center: Text(percentText),
             linearGradient: const LinearGradient(
               colors: <Color>[
                 AppColors.greenPrimaryColor,
