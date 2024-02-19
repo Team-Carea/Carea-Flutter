@@ -1,30 +1,43 @@
+import 'package:carea/app/data/models/chat_room_list_model.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoomTile extends StatelessWidget {
-  const ChatRoomTile({super.key});
+  final ChatRoom chatRoomInfo;
+
+  const ChatRoomTile({super.key, required this.chatRoomInfo});
 
   @override
   Widget build(BuildContext context) {
-    return const ListTile(
-      leading: CircleAvatar(
-        radius: 25,
-      ),
-      title: Text(
-        '신진영',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
+    return Column(
+      children: [
+        ListTile(
+          leading: CircleAvatar(
+            radius: 25,
+            backgroundImage: NetworkImage(chatRoomInfo.opponent.profileUrl),
+          ),
+          title: Text(
+            chatRoomInfo.opponent.nickname,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          subtitle: Row(
+            children: [
+              Text(
+                chatRoomInfo.latestMessage!,
+                style: const TextStyle(fontSize: 13),
+              )
+            ],
+          ),
+          trailing: const Text('02:18'),
         ),
-      ),
-      subtitle: Row(
-        children: [
-          Text(
-            '정현아... 자니..?',
-            style: TextStyle(fontSize: 13),
-          )
-        ],
-      ),
-      trailing: Text('02:18'),
+        const Divider(
+          thickness: 1,
+          indent: 14,
+          endIndent: 14,
+        ),
+      ],
     );
   }
 }
