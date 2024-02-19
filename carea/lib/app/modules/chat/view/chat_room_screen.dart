@@ -9,7 +9,9 @@ import 'package:uuid/uuid.dart';
 import '../../confirm_help/view/confirm_help_screen.dart';
 
 class ChatRoomScreen extends StatefulWidget {
-  const ChatRoomScreen({super.key});
+  final int id;
+
+  const ChatRoomScreen({super.key, required this.id});
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();

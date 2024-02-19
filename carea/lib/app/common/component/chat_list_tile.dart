@@ -1,4 +1,5 @@
 import 'package:carea/app/data/models/chat_room_list_model.dart';
+import 'package:carea/app/modules/chat/view/chat_room_screen.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoomTile extends StatelessWidget {
@@ -11,6 +12,13 @@ class ChatRoomTile extends StatelessWidget {
     return Column(
       children: [
         ListTile(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatRoomScreen(id: chatRoomInfo.id)),
+            );
+          },
           leading: CircleAvatar(
             radius: 25,
             backgroundImage: NetworkImage(chatRoomInfo.opponent.profileUrl),
