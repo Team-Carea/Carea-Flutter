@@ -1,52 +1,32 @@
+import 'package:dio/dio.dart';
 import 'package:carea/app/common/const/config.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:uuid/uuid.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
-class ChatService {
-  final List<types.Message> messages = [];
-  final user1 = const types.User(
-    id: '1', // 나의 id
-  );
-  final user2 = const types.User(
-    id: '2', // 상대방의 id
-    firstName: '지니신',
-  );
-  bool isLoading = false;
-  late WebSocketChannel channel;
-  final String roomId = '';
+class ChatRoomService {
+  final Dio dio = Dio();
 
-  // 웹소켓 연결 초기화
-  void initializeWebsocket() {
-    channel = IOWebSocketChannel.connect(
-        'ws://${AppConfig.localHost}${AppConfig.chatRoomUrl}/$roomId');
-  }
+  // GET: 채팅방 목록 조회
+  Future<List<Map<String, dynamic>>> getChatRoomList() async {
+    // TODO: develop 브랜치 함수 활용해서 리팩토링
+    // final accessToken = AuthStorage.getAccessToken();
+    const accessToken =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4Mzc5NjA2LCJpYXQiOjE3MDgzNzI0MDYsImp0aSI6IjEwNTY3NThlYWJlZjQ1Njk4YzM3NTA0NDBmNjlmOGIxIiwidXNlcl9pZCI6Mn0.qeWyCoSQ04BSzHmE5lioeZ-SfO5r8L9b_LPGlN3bxzE';
 
-  void addMessage(types.Message message) {
-    messages.insert(0, message); // 화면 맨 아래에 메시지 추가
-    isLoading = true;
-    if (message is types.TextMessage) {
-      // channel.sink.add(message.text); // 메시지를 백엔드(웹소켓 서버)로 전송
-      messages.insert(
-        0,
-        types.TextMessage(
-          author: user2,
-          createdAt: DateTime.now().millisecondsSinceEpoch,
-          id: const Uuid().v4(),
-          text: "",
-        ),
-      );
-    }
-  }
+    final response = await dio.get(
+      'http://${AppConfig.localHost}/${AppConfig.chatRoomListUrl}/',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+        },
+      ),
+    );
 
-  void onMessageReceived(response) {
-    if (response == '<FIN>') {
-      isLoading = false;
+    if (response.statusCode == 200) {
+      List<dynamic> rawData = response.data;
+      return rawData
+          .map<Map<String, dynamic>>((i) => i as Map<String, dynamic>)
+          .toList();
     } else {
-      // 채팅방의 마지막 메시지를 전달받은 내용으로 변경
-      messages.first = (messages.first as types.TextMessage).copyWith(
-          text: (messages.first as types.TextMessage).text + response);
+      throw Exception('Failed to load chat room list');
     }
   }
 }
