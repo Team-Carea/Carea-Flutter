@@ -23,17 +23,43 @@ class _PostListScreenState extends State<PostListScreen> {
     _fetchPosts();
   }
 
+  String _mapCategoryToServerFormat(String categoryName) {
+    switch (widget.pageTitle) {
+      case '경제/금융':
+        return 'economic';
+      case '진로':
+        return 'future';
+      case '생활':
+        return 'life';
+      case '자유':
+        return 'free';
+      default:
+        return '';
+    }
+  }
+
   Future<void> _fetchPosts() async {
-    List<String> categories = ['latest', 'free', 'life', 'economic', 'future'];
-    await _posts.fetchAndSetPosts('$categories');
+    String serverCategory = _mapCategoryToServerFormat(widget.pageTitle);
+    await _posts.fetchAndSetPosts(serverCategory);
     if (mounted) {
       setState(() {});
     }
   }
 
+  void _navigateAndCreatePost() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => const CreatePostScreen(pageTitle: '전체 게시글')),
+    );
+
+    if (result == true) {
+      _fetchPosts();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final post = _posts.items;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -57,6 +83,7 @@ class _PostListScreenState extends State<PostListScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
           itemCount: _posts.items.length,
           itemBuilder: (BuildContext context, int index) {
+            final post = _posts.items[index];
             return InkWell(
                 onTap: () {
                   Navigator.push(
@@ -64,6 +91,7 @@ class _PostListScreenState extends State<PostListScreen> {
                     MaterialPageRoute(
                         builder: (context) => PostDetail(
                               pageTitle: widget.pageTitle,
+                              id: post.id,
                             )),
                   );
                 },
@@ -71,7 +99,7 @@ class _PostListScreenState extends State<PostListScreen> {
                   children: [
                     ListTile(
                       title: Text(
-                        post[index].title,
+                        post.title,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -82,7 +110,7 @@ class _PostListScreenState extends State<PostListScreen> {
                         children: [
                           const SizedBox(height: 10),
                           Text(
-                            post[index].content,
+                            post.content,
                             style: const TextStyle(fontSize: 16),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -92,14 +120,14 @@ class _PostListScreenState extends State<PostListScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                post[index].created_at,
+                                post.created_at,
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey,
                                 ),
                               ),
                               Text(
-                                post[index].nickname,
+                                post.nickname,
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey,
@@ -121,10 +149,7 @@ class _PostListScreenState extends State<PostListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CreatePostScreen()),
-          );
+          _navigateAndCreatePost();
         },
         backgroundColor: AppColors.greenPrimaryColor,
         child: const Icon(Icons.add),
