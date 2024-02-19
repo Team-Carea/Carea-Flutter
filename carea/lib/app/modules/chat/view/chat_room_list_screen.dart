@@ -1,7 +1,10 @@
 import 'package:carea/app/common/component/chat_list_tile.dart';
 import 'package:carea/app/common/const/app_colors.dart';
+import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/data/models/chat_room_list_model.dart';
+import 'package:carea/app/modules/chat/controller/chat_room_controller.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoomListScreen extends StatefulWidget {
@@ -12,53 +15,41 @@ class ChatRoomListScreen extends StatefulWidget {
 }
 
 class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
+  final ChatRoomController _controller = ChatRoomController();
+
   @override
   Widget build(BuildContext context) {
-    // 테스트 더미데이터
-    List<ChatRoom> chatRooms = [
-      ChatRoom(
-        id: 1,
-        help: 1,
-        latestMessage: '정현아 자니?',
-        opponent: Opponent(
-          id: 1,
-          nickname: '녕지',
-          profileUrl:
-              'https://storage.googleapis.com/carea/profile-imgs/kinopio.png',
-        ),
-      ),
-      ChatRoom(
-        id: 2,
-        help: 1,
-        latestMessage: '진영아 나 너무 배가 고파',
-        opponent: Opponent(
-          id: 1,
-          nickname: '임지',
-          profileUrl:
-              'https://storage.googleapis.com/carea/profile-imgs/kinopio.png',
-        ),
-      ),
-    ];
-
     return DefaultLayout(
       appbar: AppBar(
         title: const Text('채팅'),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: _buildJinyChatBotCard(),
-          ),
-          Expanded(
-            child: ListView.builder(
-                itemCount: chatRooms.length,
-                itemBuilder: (context, index) {
-                  return ChatRoomTile(chatRoomInfo: chatRooms[index]);
-                }),
-          ),
-        ],
+      child: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _controller.fetchChatRooms(),
+        builder: (_, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final chatRoomList = ChatRoomList.fromJson(snapshot.data!);
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: _buildJinyChatBotCard(),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: chatRoomList.chatRooms.length,
+                  itemBuilder: (context, index) {
+                    return ChatRoomTile(
+                        chatRoomInfo: chatRoomList.chatRooms[index]);
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
