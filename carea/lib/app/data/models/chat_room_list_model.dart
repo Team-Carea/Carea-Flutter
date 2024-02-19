@@ -3,11 +3,10 @@ class ChatRoomList {
 
   ChatRoomList({required this.chatRooms});
 
-  factory ChatRoomList.fromJson(Map<String, dynamic> json) {
-    var list = json['chatRooms'] as List;
-    List<ChatRoom> chatRoomsList =
-        list.map((i) => ChatRoom.fromJson(i)).toList();
-    return ChatRoomList(chatRooms: chatRoomsList);
+  factory ChatRoomList.fromJson(List<Map<String, dynamic>> json) {
+    List<ChatRoom> chatRoomList =
+        json.map((i) => ChatRoom.fromJson(i)).toList();
+    return ChatRoomList(chatRooms: chatRoomList);
   }
 }
 

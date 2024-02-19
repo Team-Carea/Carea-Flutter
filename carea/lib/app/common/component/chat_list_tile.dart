@@ -33,7 +33,7 @@ class ChatRoomTile extends StatelessWidget {
           subtitle: Row(
             children: [
               Text(
-                chatRoomInfo.latestMessage!,
+                chatRoomInfo.latestMessage ?? '기본 미리보기 메시지',
                 style: const TextStyle(fontSize: 13),
               )
             ],
