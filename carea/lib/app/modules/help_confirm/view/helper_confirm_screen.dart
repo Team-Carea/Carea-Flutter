@@ -1,4 +1,5 @@
 import 'package:carea/app/common/component/custom_button.dart';
+import 'package:carea/app/common/component/notice_dialog.dart';
 import 'package:carea/app/common/component/sentence_card.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
@@ -17,6 +18,7 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
   Widget build(BuildContext context) {
     return DefaultLayout(
       appbar: AppBar(
+        backgroundColor: AppColors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -60,7 +62,7 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
             const SizedBox(height: 12),
             CustomElevatedButton(
               text: '전송하기',
-              screenRoute: () {},
+              screenRoute: () => showSuccessConfirmDialog(context),
               icon: Icons.send,
             )
           ],
