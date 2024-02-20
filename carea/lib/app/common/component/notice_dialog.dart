@@ -47,6 +47,52 @@ void showSuccessConfirmDialog(BuildContext context) {
   );
 }
 
+void showFailureConfirmDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(height: 16),
+                const Text('💥 다시 시도해보세요!',
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                const Text('방금 녹음된 문장:',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+                const SizedBox(height: 14),
+                const Text('"녹음된 문장이 들어가는 위치. 불일치 부분 표시까지 된다면 좋음."',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.w400)),
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('확인'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 void showLevelUpDialog(BuildContext context) {
   showDialog(
     context: context,

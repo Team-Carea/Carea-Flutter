@@ -16,7 +16,7 @@ class VoiceRecordButton extends StatelessWidget {
       ),
       child: IconButton(
         icon: const Icon(Icons.mic_none, color: Colors.white),
-        iconSize: 40,
+        iconSize: 50,
         onPressed: onPressed,
       ),
     );

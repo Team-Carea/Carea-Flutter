@@ -58,7 +58,9 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
               textStyle: sentenceTextStyle,
             ),
             SizedBox(height: getScreenHeight(context) * 0.23),
-            Center(child: VoiceRecordButton(onPressed: () {}))
+            Center(child: VoiceRecordButton(onPressed: () {
+              showFailureConfirmDialog(context);
+            }))
           ],
         ),
       ),
