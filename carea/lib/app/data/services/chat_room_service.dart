@@ -18,11 +18,13 @@ class ChatRoomService {
   bool isLoading = false;
   late WebSocketChannel channel;
   final String roomId = '1'; // 임시 채팅방 Id
+  final String accessToken =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NDQ2MjIxLCJpYXQiOjE3MDg0MzkwMjEsImp0aSI6IjZlY2ZkMWQ3YzE3YzQ3NTQ4NDRiNGMyODU2ZmEwZTJlIiwidXNlcl9pZCI6Mn0.N7PGt424kHXJfX5UCJPEOMhFsC71y0itgWz2fp8dwVY';
 
   // 웹소켓 연결 초기화
   void initializeWebsocket() {
     channel = IOWebSocketChannel.connect(
-        'ws://${AppConfig.localHost}${AppConfig.chatRoomUrl}/$roomId/');
+        'ws://${AppConfig.localHost}${AppConfig.chatRoomUrl}/$roomId?token=$accessToken');
   }
 
   void addMessage(types.Message message) {
