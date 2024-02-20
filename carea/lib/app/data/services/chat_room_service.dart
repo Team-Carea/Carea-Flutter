@@ -9,7 +9,7 @@ class ChatRoomService {
     // TODO: develop 브랜치 함수 활용해서 리팩토링
     // final accessToken = AuthStorage.getAccessToken();
     const accessToken =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NDU0MTMyLCJpYXQiOjE3MDg0NDY5MzIsImp0aSI6ImZjNzhkMjA1Mzk0MzQxMjc4NjIxNDNjZmQ2MmU4YThkIiwidXNlcl9pZCI6Mn0.P4jWsv7Ai3ULQv59tpjxttXtzR1DRpnmx1A2Wpg4x0s';
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
 
     final response = await dio.get(
       'http://${AppConfig.localHost}/${AppConfig.chatRoomListUrl}/',

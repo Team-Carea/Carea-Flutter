@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:carea/app/common/const/config.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -18,7 +17,7 @@ class ChatRoomService {
   late WebSocketChannel channel;
   final String roomId = '1'; // 임시 채팅방 Id
   final String accessToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NDU0MTMyLCJpYXQiOjE3MDg0NDY5MzIsImp0aSI6ImZjNzhkMjA1Mzk0MzQxMjc4NjIxNDNjZmQ2MmU4YThkIiwidXNlcl9pZCI6Mn0.P4jWsv7Ai3ULQv59tpjxttXtzR1DRpnmx1A2Wpg4x0s';
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
 
   // 웹소켓 연결 초기화
   void initializeWebsocket() {
@@ -36,23 +35,18 @@ class ChatRoomService {
         'message': message.text,
       });
       channel.sink.add(messagePayload);
-      messages.insert(
-        0,
-        types.TextMessage(
-          author: user2,
-          createdAt: DateTime.now().millisecondsSinceEpoch,
-          id: const Uuid().v4(),
-          text: "",
-        ),
-      );
     }
   }
 
-  // 메시지 전송요청 처리
+  // 메시지 수신 처리
   void onMessageReceived(response) {
-    if (response == '<FIN>') {
-      isLoading = false;
-    } else {
+    // 내가 보낸 메시지에 대한 서버측의 응답일 경우
+    if (response[0] == '{') {
+      print(response);
+    }
+    // 다른 사람으로부터 받은 메시지일 경우
+    // TODO: 현재 메시지x, 받은 메시지임을 나타낼 것
+    else {
       // 채팅방의 마지막 메시지를 전달받은 내용으로 변경
       messages.first = (messages.first as types.TextMessage).copyWith(
           text: (messages.first as types.TextMessage).text + response);

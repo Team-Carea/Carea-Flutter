@@ -48,6 +48,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           Padding(
             padding: EdgeInsets.only(
                 right: MediaQuery.of(context).size.width * 0.05),
+            // TODO: 도움 인증화면 라우팅
             child: ElevatedButton(
               onPressed: () {
                 // Navigator.push(
