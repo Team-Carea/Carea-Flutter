@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:location/location.dart';
 
 Dio dio = Dio();
+
+const gpsApiKey = 'AIzaSyBYBmG8iz2Cn8HJY6ecFduAzHZXcgqmUnM';
 const accessToken =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
 
@@ -86,8 +88,6 @@ Future<List<Map<String, dynamic>>> getHelpData() async {
           'longitude': double.parse(item['longitude'])
         });
       }
-      print('Google 지도에 근처 도움 설정');
-      print(places);
       return places;
     } else {
       print('서버 에러: 상태 코드 ${response.statusCode}');
@@ -103,12 +103,7 @@ Future<List<Map<String, dynamic>>> getHelpData() async {
 
 // 상세 도움 표시하기
 
-Future<void> getHelpDataDetail(
-  int id,
-  Object user,
-  String title,
-  String content,
-) async {
+Future<Map<String, dynamic>> getHelpDataDetail(int id) async {
   var url = 'http://10.0.2.2:8000/helps/$id';
   try {
     var response = await dio.get(
@@ -119,12 +114,24 @@ Future<void> getHelpDataDetail(
         },
       ),
     );
-
+    print(response.data['result']);
     if (response.statusCode == 200) {
-      print("주위 도움 상세 정보 출력");
+      var extracted = response.data['result'];
+      return {
+        'profileImageUrl': extracted['user']['profile_url'],
+        'nickname': extracted['user']['nickname'],
+        'title': extracted['title'],
+        'content': extracted['content'],
+        'location': extracted['location'],
+        'createdAt': extracted['created_at'],
+      };
+    } else {
+      print('서버 에러: 상태 코드 ${response.statusCode}');
+      throw Exception('상세 정보 가져오기 실패');
     }
   } catch (e) {
-    print('Failed to send data: $e');
+    print('데이터 전송 실패: $e');
     careaToast(toastMsg: '오류가 발생했습니다');
+    throw Exception('상세 정보 가져오기 실패');
   }
 }

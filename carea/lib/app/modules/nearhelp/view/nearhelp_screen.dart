@@ -16,6 +16,8 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
   late GoogleMapController mapController;
   late LocationService locationService;
   LatLng? userLocation;
+  List<Map<String, dynamic>> places = [];
+  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
@@ -31,9 +33,11 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
 
   @override
   void initState() {
+    addCustomIcon();
     super.initState();
     locationService = LocationService();
     _getUserLocation();
+    _fetchPlaces();
   }
 
   Future<void> _getUserLocation() async {
@@ -43,6 +47,24 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
         userLocation = LatLng(locationData.latitude!, locationData.longitude!);
       });
     }
+  }
+
+  void _fetchPlaces() async {
+    places = await getHelpData();
+    setState(() {});
+  }
+
+  void addCustomIcon() {
+    BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(size: Size(20, 20)),
+            "asset/img/redpin.png")
+        .then(
+      (icon) {
+        setState(() {
+          markerIcon = icon;
+        });
+      },
+    );
   }
 
   @override
@@ -55,38 +77,6 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> places = [
-      {
-        'name': 'Place 1',
-        'latitude': 37.532600,
-        'longitude': 127.024612,
-      },
-      {
-        'name': 'Place 2',
-        'latitude': 37.532700,
-        'longitude': 127.024712,
-      },
-      {
-        'name': 'Place 3',
-        'latitude': 37.532800,
-        'longitude': 127.024812,
-      },
-      {
-        'name': 'Place 4',
-        'latitude': 37.532900,
-        'longitude': 127.024912,
-      },
-      {
-        'name': 'Place 5',
-        'latitude': 37.533000,
-        'longitude': 127.025012,
-      },
-      {
-        'name': 'Place 6',
-        'latitude': 37.533100,
-        'longitude': 127.025112,
-      },
-    ];
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -101,7 +91,7 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
           ),
           mapType: MapType.normal,
           myLocationEnabled: true,
-          myLocationButtonEnabled: true, //사용자 위치 중앙으로 가져오는 버튼
+          myLocationButtonEnabled: true,
           onMapCreated: (GoogleMapController controller) {
             mapController = controller;
           },
@@ -110,16 +100,15 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
             places.map(
               (place) {
                 return Marker(
-                  markerId: MarkerId(place['name']),
+                  markerId: MarkerId(place['id']),
                   position: LatLng(place['latitude'], place['longitude']),
-                  infoWindow: InfoWindow(title: place['name']),
-                  icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueRed),
+                  icon: markerIcon,
                   onTap: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const NearHelpCheck()));
+                            builder: (context) =>
+                                const NearHelpCheck(helpId: 8)));
                   },
                 );
               },
@@ -268,14 +257,5 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
         maxLines: null,
       ),
     );
-  }
-}
-
-class marker_widget extends StatelessWidget {
-  const marker_widget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }
