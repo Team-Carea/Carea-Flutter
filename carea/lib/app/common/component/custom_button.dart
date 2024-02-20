@@ -5,9 +5,14 @@ import 'package:flutter/material.dart';
 class CustomElevatedButton extends StatelessWidget {
   final String text;
   final dynamic screenRoute;
+  final IconData? icon;
 
-  const CustomElevatedButton(
-      {super.key, required this.text, required this.screenRoute});
+  const CustomElevatedButton({
+    super.key,
+    required this.text,
+    required this.screenRoute,
+    this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +26,23 @@ class CustomElevatedButton extends StatelessWidget {
         foregroundColor: AppColors.darkGreenPrimaryColor,
       ),
       onPressed: screenRoute,
-      child: Text(
-        text,
-        style: elevatedBtnTextStyle,
-      ),
+      child: icon == null
+          ? Text(
+              text,
+              style: elevatedBtnTextStyle,
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Spacer(),
+                Text(
+                  text,
+                  style: elevatedBtnTextStyle,
+                ),
+                const Spacer(),
+                Icon(icon!),
+              ],
+            ),
     );
   }
 }

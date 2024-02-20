@@ -6,7 +6,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:uuid/uuid.dart';
 
-import '../../confirm_help/view/confirm_help_screen.dart';
+import '../../help_confirm/view/helper_confirm_screen.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   final int id;
