@@ -4,10 +4,8 @@ import 'dart:convert';
 import 'package:location/location.dart';
 
 Dio dio = Dio();
-
-const gpsApiKey = 'AIzaSyBYBmG8iz2Cn8HJY6ecFduAzHZXcgqmUnM';
-const accessToken =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
+const gpsApiKey = gpsApiKey;
+const accessToken = accessToken;
 
 class LocationService {
   Location location = Location();
