@@ -4,6 +4,7 @@ import 'package:carea/app/common/component/sentence_card.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
+import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:flutter/material.dart';
 
 class HelperConfirmScreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 24),
+            SizedBox(height: getScreenHeight(context) * 0.03),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -50,11 +51,11 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
               ],
             ),
             const SentenceCard(
-              text: '"아직 생성된 문장이 없습니다."',
+              text: '아직 생성된 문장이 없습니다.',
               bgcolor: AppColors.faintGray,
               textStyle: sentenceTextStyle,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: getScreenHeight(context) * 0.05),
             const Text(
               '인증 문장을 보내주세요 💬',
               style: screenContentTitleTextStyle,
