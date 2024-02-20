@@ -1,23 +1,25 @@
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
-import 'package:carea/app/data/services/chat_room_service.dart';
+import 'package:carea/app/data/services/chat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-import '../../confirm_help/view/confirm_help_screen.dart';
+import '../../help_confirm/view/helper_confirm_screen.dart';
 
 class ChatRoomScreen extends StatefulWidget {
-  const ChatRoomScreen({super.key});
+  final int id;
+
+  const ChatRoomScreen({super.key, required this.id});
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  final ChatRoomService chatRoomService = ChatRoomService();
+  final ChatService chatRoomService = ChatService();
 
   @override
   void initState() {

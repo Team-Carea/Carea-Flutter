@@ -1,5 +1,7 @@
 import 'package:carea/app/common/layout/default_layout.dart';
+import 'package:carea/app/modules/chat/view/chat_room_list_screen.dart';
 import 'package:carea/app/modules/user/view/login_screen.dart';
+import 'package:carea/app/modules/user/view/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -19,7 +21,7 @@ class _App extends StatelessWidget {
         fontFamily: 'NotoSans',
       ),
       home: const DefaultLayout(
-        child: LoginScreen(),
+        child: SplashScreen(),
       ),
     );
   }

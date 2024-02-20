@@ -1,24 +1,24 @@
 import 'package:carea/app/common/component/custom_button.dart';
 import 'package:carea/app/common/component/custom_text_form_field.dart';
+import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
-import 'package:carea/app/modules/user/view/join_screen.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class JoinScreen extends StatefulWidget {
+  const JoinScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<JoinScreen> createState() => _JoinScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _JoinScreenState extends State<JoinScreen> {
+  String nickname = '';
+  String introduction = '';
   String email = '';
   String password = '';
 
@@ -35,11 +35,33 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: getScreenWidth(context) * 0.06),
                 _Title(),
-                SizedBox(height: getScreenWidth(context) * 0.08),
+                SizedBox(height: getScreenWidth(context) * 0.2),
+                const Text(
+                  '닉네임',
+                  style: inputTitleTextStyle,
+                ),
+                CustomTextFormField(
+                  hintText: '닉네임을 입력해주세요',
+                  onChanged: (String value) {
+                    nickname = value;
+                  },
+                ),
+                SizedBox(height: getScreenWidth(context) * 0.04),
+                const Text(
+                  '자기소개',
+                  style: inputTitleTextStyle,
+                ),
+                CustomTextFormField(
+                  hintText: '자기소개를 입력해주세요',
+                  onChanged: (String value) {
+                    introduction = value;
+                  },
+                ),
+                SizedBox(height: getScreenWidth(context) * 0.04),
                 const Text(
                   '이메일',
                   style: inputTitleTextStyle,
@@ -64,13 +86,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: getScreenWidth(context) * 0.08),
                 CustomElevatedButton(
-                  text: '로그인',
+                  text: '회원 가입하기',
                   screenRoute: () async {
-                    // 로그인 요청
-                    // 테스트 유저 정보: {"email": "careleaver@gmail.com", "password": "carealeaver123"}
+                    // 회원가입 요청
+                    // test data
                     final response = await dio.post(
-                      'http://${AppConfig.localHost}/users/login/',
-                      data: {"email": email, "password": password},
+                      'http://${AppConfig.localHost}/users/registration/',
+                      data: {
+                        "email": "jiny@gmail.com",
+                        "password1": "carealeaver123",
+                        "password2": "carealeaver123",
+                        "nickname": "지니신",
+                        "profile_url":
+                            "https://storage.googleapis.com/carea/profile-imgs/careleaver.jpeg", // 필수 아님
+                        "introduction": "저는 금융지식에 관심이 많아요." // 필수 아님
+                      },
                     );
 
                     final accessToken = response.data['access'];
@@ -79,19 +109,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     AuthStorage.saveAccessToken(accessToken);
                     AuthStorage.saveRefreshToken(refreshToken);
 
-                    // 정상 로그인 -> RootTab 이동
+                    // 정상 회원가입 -> RootTab 이동
                     // Navigator.of(context)
                     //     .push(MaterialPageRoute(builder: (_) => RootTab()));
                   },
                 ),
-                SizedBox(height: getScreenWidth(context) * 0.01),
-                CustomTextButton(
-                  text: '아직 회원이 아니신가요? 회원가입',
-                  screenRoute: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const JoinScreen()));
-                  },
-                ),
+                SizedBox(height: MediaQuery.of(context).size.width * 0.01),
               ],
             ),
           ),
@@ -107,32 +130,19 @@ class _Title extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SvgPicture.asset(
-          'asset/svg/carea_logo.svg',
-          width: getScreenWidth(context) / 5 * 2,
-        ),
         SizedBox(height: getScreenWidth(context) * 0.04),
         const Text(
-          "Hello!\nThis is",
-          style: titleTextStyle,
+          "회원 가입",
+          style: joinTitleTextStyle,
         ),
-        const Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Care a",
-              style: careaTitleTextStyle,
-            ),
-            Text(
-              "rea",
-              style: titleTextStyle,
-            ),
-          ],
+        const Divider(
+          color: AppColors.greenPrimaryColor,
+          thickness: 8,
         ),
         const Text(
-          "for you",
-          style: titleTextStyle,
-        ),
+          '당신을 소개할 수 있는 프로필을 만들어주세요',
+          style: descriptionTextStyle,
+        )
       ],
     );
   }

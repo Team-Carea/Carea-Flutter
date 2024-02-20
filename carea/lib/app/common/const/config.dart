@@ -3,17 +3,19 @@ class AppConfig {
   static const String apiHost = 'carea.app';
   static const String baseUrl = 'http://$localHost';
   // static const String baseUrl = 'https://$apiHost';
-  static const String signInUrl = '/auth/signin';
-  static const String signUpUrl = '/auth/signup';
-  static const String googleSignInUrl = '/auth/google/login';
-  static const String communityUrl = '/posts';
-  static const String chatUrl = '/chats';
-  static const String chatRoomUrl = '/ws$chatUrl';
-  static const String nearHelpUrl = '/helps';
-  static const String nearHelpSttUrl = '/ws$nearHelpUrl/stt';
-  static const String profileUrl = '/users/profile';
+  static const String signInUrl = 'auth/signin';
+  static const String signUpUrl = 'auth/signup';
+  static const String googleSignInUrl = 'auth/google/login';
+  static const String communityUrl = 'posts';
+  static const String chatUrl = 'chats';
+  static const String chatRoomListUrl = '$chatUrl/rooms';
+  static const String chatRoomUrl = 'ws/$chatUrl';
+  static const String nearHelpUrl = 'helps';
+  static const String nearHelpSttUrl = 'ws/$nearHelpUrl/stt';
+  static const String profileUrl = 'users/profile';
 
   static const timeout = Duration(seconds: 5);
   static const splashTime = Duration(seconds: 2);
-  static const String token = 'authToken';
+  static const String accessTokenKey = 'access';
+  static const String refreshTokenKey = 'refresh';
 }

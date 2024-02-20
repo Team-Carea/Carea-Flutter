@@ -1,10 +1,5 @@
 import 'dart:convert';
-
 import 'package:carea/app/common/const/config.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:uuid/uuid.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChatRoomService {
   final List<types.Message> messages = [];
@@ -51,13 +46,13 @@ class ChatRoomService {
     }
   }
 
-  void onMessageReceived(response) {
-    if (response == '<FIN>') {
-      isLoading = false;
+    if (response.statusCode == 200) {
+      List<dynamic> rawData = response.data;
+      return rawData
+          .map<Map<String, dynamic>>((i) => i as Map<String, dynamic>)
+          .toList();
     } else {
-      // 채팅방의 마지막 메시지를 전달받은 내용으로 변경
-      messages.first = (messages.first as types.TextMessage).copyWith(
-          text: (messages.first as types.TextMessage).text + response);
+      throw Exception('Failed to load chat room list');
     }
   }
 }
