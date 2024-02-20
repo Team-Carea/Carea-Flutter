@@ -1,5 +1,5 @@
 import 'package:carea/app/common/const/app_colors.dart';
-import 'package:carea/app/modules/chat/view/chat_list_screen.dart';
+import 'package:carea/app/modules/chat/view/chat_room_list_screen.dart';
 import 'package:carea/app/modules/community/view/community_screen.dart';
 import 'package:carea/app/modules/nearhelp/view/nearhelp_screen.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +49,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         physics: const NeverScrollableScrollPhysics(),
         children: const [
           CommunityScreen(),
-          ChatlistScreen(),
+          ChatRoomListScreen(),
           NearhelpScreen(),
         ],
       ),

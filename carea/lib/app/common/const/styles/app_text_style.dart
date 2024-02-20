@@ -23,6 +23,21 @@ const inputTitleTextStyle = TextStyle(
   color: AppColors.darkGreenPrimaryColor,
 );
 
+const screenContentTitleTextStyle = TextStyle(
+  fontSize: 20,
+  fontWeight: FontWeight.w700,
+);
+const screenContentTitleBlueTextStyle = TextStyle(
+  fontSize: 20,
+  fontWeight: FontWeight.w700,
+  color: AppColors.bluePrimaryColor,
+);
+
+const sentenceTextStyle = TextStyle(
+  fontSize: 20,
+  fontWeight: FontWeight.w500,
+);
+
 const descriptionTextStyle = TextStyle(
   fontSize: 14,
   fontWeight: FontWeight.w400,
