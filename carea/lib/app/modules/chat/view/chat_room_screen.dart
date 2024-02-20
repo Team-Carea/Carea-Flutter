@@ -5,9 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:uuid/uuid.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-
-import '../../help_confirm/view/helper_confirm_screen.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   final int id;
@@ -19,7 +16,7 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  final ChatService chatRoomService = ChatService();
+  final ChatRoomService chatRoomService = ChatRoomService();
 
   @override
   void initState() {
@@ -42,7 +39,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         title: Text(titleName),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            chatRoomService.closeWebsocket();
+            return Navigator.of(context).pop();
+          },
         ),
         actions: <Widget>[
           Padding(
