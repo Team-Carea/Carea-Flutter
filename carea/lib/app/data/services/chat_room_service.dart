@@ -1,3 +1,4 @@
+import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:carea/app/common/const/config.dart';
 
@@ -7,15 +8,17 @@ class ChatRoomService {
   // GET: 채팅방 목록 조회
   Future<List<Map<String, dynamic>>> getChatRoomList() async {
     // TODO: develop 브랜치 함수 활용해서 리팩토링
-    // final accessToken = AuthStorage.getAccessToken();
+    // final accessToken = await AuthStorage.getAccessToken();
+    // print(accessToken.toString());
     const accessToken =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
+        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
+    // AuthStorage.saveAccessToken(accessToken);
 
     final response = await dio.get(
       'http://${AppConfig.localHost}/${AppConfig.chatRoomListUrl}/',
       options: Options(
         headers: {
-          'Authorization': 'Bearer $accessToken',
+          'Authorization': accessToken,
         },
       ),
     );
@@ -29,4 +32,6 @@ class ChatRoomService {
       throw Exception('Failed to load chat room list');
     }
   }
+
+  // GET: 채팅 메시지 목록 조회
 }
