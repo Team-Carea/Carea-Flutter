@@ -23,13 +23,13 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
       appbar: AppBar(
         title: const Text('채팅'),
       ),
-      child: FutureBuilder<List<Map<String, dynamic>>>(
+      child: FutureBuilder<ChatRoomList>(
         future: _controller.fetchChatRooms(),
         builder: (_, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          final chatRoomList = ChatRoomList.fromJson(snapshot.data!);
+          final chatRoomList = snapshot.data!;
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -40,10 +40,10 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: chatRoomList.chatRooms.length,
+                  itemCount: chatRoomList.result.length,
                   itemBuilder: (context, index) {
                     return ChatRoomTile(
-                        chatRoomInfo: chatRoomList.chatRooms[index]);
+                        chatRoomInfo: chatRoomList.result[index]);
                   },
                 ),
               ),

@@ -1,25 +1,33 @@
 class ChatRoomList {
-  final List<ChatRoom> chatRooms;
+  final bool isSuccess;
+  final String message;
+  final List<ChatRoom> result;
 
-  ChatRoomList({required this.chatRooms});
+  ChatRoomList(
+      {required this.isSuccess, required this.message, required this.result});
 
-  factory ChatRoomList.fromJson(List<Map<String, dynamic>> json) {
-    List<ChatRoom> chatRoomList =
-        json.map((i) => ChatRoom.fromJson(i)).toList();
-    return ChatRoomList(chatRooms: chatRoomList);
+  factory ChatRoomList.fromJson(Map<String, dynamic> json) {
+    return ChatRoomList(
+      isSuccess: json['isSuccess'],
+      message: json['message'],
+      result:
+          (json['result'] as List).map((i) => ChatRoom.fromJson(i)).toList(),
+    );
   }
 }
 
 class ChatRoom {
   final int id;
   final int help;
-  final String? latestMessage;
+  final String latestMessage;
+  final String updatedAt;
   final Opponent opponent;
 
   ChatRoom(
       {required this.id,
       required this.help,
-      this.latestMessage,
+      required this.latestMessage,
+      required this.updatedAt,
       required this.opponent});
 
   factory ChatRoom.fromJson(Map<String, dynamic> json) {
@@ -27,6 +35,7 @@ class ChatRoom {
       id: json['id'],
       help: json['help'],
       latestMessage: json['latest_message'],
+      updatedAt: json['updated_at'],
       opponent: Opponent.fromJson(json['opponent']),
     );
   }
@@ -44,7 +53,7 @@ class Opponent {
     return Opponent(
       id: json['id'],
       nickname: json['nickname'],
-      profileUrl: json['profile_url'] ?? "", // 프로필 URL이 null일 경우 빈 문자열로 처리
+      profileUrl: json['profile_url'],
     );
   }
 }
