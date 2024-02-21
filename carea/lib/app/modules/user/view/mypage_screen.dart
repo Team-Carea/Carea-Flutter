@@ -46,6 +46,7 @@ class MypageScreen extends StatelessWidget {
                   ExpBar(
                     exp: 0.5,
                   ),
+                  ExpBar(exp: 0.5),
                   SizedBox(height: 50),
                   Text(
                     '설정',
