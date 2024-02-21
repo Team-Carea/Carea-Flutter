@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:location/location.dart';
 
 Dio dio = Dio();
-const gpsApiKey = 'AIzaSyBYBmG8iz2Cn8HJY6ecFduAzHZXcgqmUnM';
+const gpsApiKey = 'gpsApiKey';
 const accessToken =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
 
@@ -54,8 +54,7 @@ Future<void> sendData(String title, String content, String address) async {
         'address': address,
       }),
     );
-
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       careaToast(toastMsg: '도움이 성공적으로 등록되었습니다.');
     }
   } catch (e) {
@@ -116,7 +115,8 @@ Future<Map<String, dynamic>> getHelpDataDetail(int id) async {
     if (response.statusCode == 200) {
       var extracted = response.data['result'];
       DateTime parsedCreatedAt = DateTime.parse(extracted['created_at']);
-      String formattedCreatedAt = DateFormat.yMMMd().format(parsedCreatedAt);
+      String formattedCreatedAt =
+          '${DateFormat('yy-MM-dd').format(parsedCreatedAt)}에 올라온 글이에요';
       return {
         'profileImageUrl': extracted['user']['profile_url'],
         'nickname': extracted['user']['nickname'],
@@ -132,6 +132,34 @@ Future<Map<String, dynamic>> getHelpDataDetail(int id) async {
   } catch (e) {
     print('데이터 전송 실패: $e');
     careaToast(toastMsg: '오류가 발생했습니다');
+    throw Exception('상세 정보 가져오기 실패');
+  }
+}
+
+// 회원 정보 조회하기
+
+Future<Map<String, dynamic>> getUserDetail() async {
+  var url = 'http://10.0.2.2:8000/users/user';
+  try {
+    var response = await dio.get(
+      url,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      var extracted = response.data;
+      print(extracted);
+      return {
+        'profileImageUrl': extracted['profile_url'],
+        'nickname': extracted['nickname'],
+      };
+    } else {
+      throw Exception('상세 정보 가져오기 실패');
+    }
+  } catch (e) {
     throw Exception('상세 정보 가져오기 실패');
   }
 }

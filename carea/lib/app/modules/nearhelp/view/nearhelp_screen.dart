@@ -7,13 +7,18 @@ import 'package:carea/app/modules/nearhelp/controller/google_map_controller.dart
 import 'package:kpostal/kpostal.dart';
 
 class NearhelpScreen extends StatefulWidget {
-  const NearhelpScreen({Key? key}) : super(key: key);
-
+  const NearhelpScreen({
+    Key? key,
+  }) : super(
+          key: key,
+        );
   @override
   State<NearhelpScreen> createState() => _NearhelpScreenState();
 }
 
 class _NearhelpScreenState extends State<NearhelpScreen> {
+  Map<String, dynamic>? userDetails;
+  bool isLoading = true;
   late GoogleMapController mapController;
   late LocationService locationService;
   LatLng? userLocation;
@@ -25,8 +30,6 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
   final TextEditingController _contentController = TextEditingController();
 
   String roadAddress = 'Not selected';
-  // String latitude = 'Not selected';
-  // String longitude = 'Not selected';
 
   void _sendData() async {
     String title = _titleController.text;
@@ -43,6 +46,7 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
     locationService = LocationService();
     _getUserLocation();
     _fetchPlaces();
+    _loadUserDetails();
   }
 
   Future<void> _getUserLocation() async {
@@ -70,6 +74,31 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
     });
   }
 
+  Future<void> showNearHelpDialog(BuildContext context, int markerId) async {
+    final data = await getHelpDataDetail(markerId);
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+          backgroundColor: AppColors.white,
+          child: NearHelpCheck(data: data),
+        );
+      },
+    );
+  }
+
+  Future<void> _loadUserDetails() async {
+    var details = await getUserDetail();
+    if (mounted) {
+      setState(() {
+        userDetails = details;
+      });
+    }
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -81,45 +110,34 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('도움찾기'),
       ),
-      body: DefaultLayout(
-        child: GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: userLocation ??
-                const LatLng(37.5465, 126.9648), // 기본 위치 : 숙명여자대학교
-            zoom: 18,
-          ),
-          mapType: MapType.normal,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: true,
-          onMapCreated: (GoogleMapController controller) {
-            mapController = controller;
-          },
-          markers: Set<Marker>.of(
-            places.map((place) {
-              return Marker(
+      body: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target:
+              userLocation ?? const LatLng(37.5465, 126.9648), // 기본 위치: 숙명여자대학교
+          zoom: 18,
+        ),
+        mapType: MapType.normal,
+        myLocationEnabled: true,
+        myLocationButtonEnabled: true,
+        onMapCreated: (GoogleMapController controller) {
+          mapController = controller;
+        },
+        markers: Set<Marker>.of(
+          places.map((place) {
+            return Marker(
                 markerId: MarkerId(place['id']),
                 position: LatLng(place['latitude'], place['longitude']),
                 icon: markerIcon,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          NearHelpCheck(markerId: int.parse(place['id'])),
-                    ),
-                  );
-                },
-              );
-            }),
-          ),
+                  showNearHelpDialog(context, int.parse(place['id']));
+                });
+          }),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        elevation: 10.0,
         onPressed: () => _showAddHelpDialog(context),
         backgroundColor: AppColors.white,
         child: const Icon(
@@ -139,6 +157,7 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
       builder: (BuildContext context) {
         return SingleChildScrollView(
           child: AlertDialog(
+            backgroundColor: AppColors.white,
             title: Row(
               children: [
                 IconButton(
@@ -157,15 +176,17 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircleAvatar(
-                  backgroundColor: AppColors.darkGray,
-                  radius: 50.0,
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage:
+                      NetworkImage(userDetails?['profileImageUrl']),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(
-                    "캐리아유저 1",
-                    style: TextStyle(fontSize: 20, color: AppColors.black),
+                    userDetails?['nickname'],
+                    style:
+                        const TextStyle(fontSize: 20, color: AppColors.black),
                   ),
                 ),
                 SizedBox(
@@ -199,7 +220,6 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
                               setState(
                                 () {
                                   _addressController.text = result.address;
-                                  print(result.address);
                                 },
                               );
                             },
@@ -222,6 +242,13 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.greenPrimaryColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 12),
+                    ),
                     onPressed: () {
                       _sendData();
                     },
@@ -244,27 +271,27 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
     bool? readOnly,
   }) {
     return Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: AppColors.lightGray,
-            width: 1.0,
-          ),
-        ),
+      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(8.0),
       ),
       child: TextField(
         controller: controller,
         keyboardType: TextInputType.multiline,
         textInputAction: TextInputAction.newline,
-        style: const TextStyle(color: AppColors.black),
+        style: const TextStyle(
+          color: AppColors.black,
+          fontSize: 14,
+        ),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: const TextStyle(
             overflow: TextOverflow.ellipsis,
-            fontSize: 12,
+            fontSize: 14,
             color: AppColors.lightGray,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.normal,
           ),
           border: InputBorder.none,
           suffixIcon: suffixIcon,
