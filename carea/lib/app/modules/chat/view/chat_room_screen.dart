@@ -1,9 +1,13 @@
 import 'package:carea/app/common/const/app_colors.dart';
+import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
+import 'package:carea/app/common/util/auth_storage.dart';
+import 'package:carea/app/common/util/layout_utils.dart';
+import 'package:carea/app/data/models/chat_message_list_model.dart';
+import 'package:carea/app/data/services/chat_room_service.dart';
 import 'package:carea/app/data/services/chat_service.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:uuid/uuid.dart';
 
 class ChatRoomScreen extends StatefulWidget {
@@ -17,17 +21,47 @@ class ChatRoomScreen extends StatefulWidget {
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
   final ChatService chatService = ChatService();
+  final ChatRoomService chatRoomService = ChatRoomService();
+  final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  // 채팅목록 상태관리를 위한 변수
+  List<ChatMessage> messages = [];
+  int currentUserId = 2; // 나(자준청)의 id
 
   @override
   void initState() {
     super.initState();
     chatService.initializeWebsocket();
     // 웹소켓을 통해 서버로부터의 이벤트 수신 대기
-    chatService.channel.stream.listen((event) {
-      chatService.onMessageReceived(event);
-      setState(() {});
+    chatService.onMessageCallback = (ChatMessage message) {
+      setState(() {
+        messages.add(message);
+      });
+    };
+    chatService.listenToMessages();
+    // 메시지 로드
+    _fetchMessages(widget.id.toString());
+    // chatRoomService.getChatMessages(widget.id.toString());
+  }
+
+  Future<void> _fetchMessages(String roomId) async {
+    var dio = Dio();
+    final accessToken = await AuthStorage.getAccessToken();
+
+    final response = await dio.get(
+      'http://${AppConfig.localHost}/chats/$roomId/messages/',
+      options: Options(
+        headers: {
+          'Authorization': accessToken,
+        },
+      ),
+    );
+
+    List<ChatMessage> fetchedMessages =
+        ChatMessageList.fromJson(response.data).result!;
+    setState(() {
+      messages = fetchedMessages;
     });
-    // 기존 채팅 메시지 목록 조회
   }
 
   @override
@@ -75,59 +109,121 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           ),
         ],
       ),
-      child: Chat(
-        messages: chatService.messages,
-        onSendPressed: _handleSendPressed,
-        // showUserNames: true, // 메시지마다 username 보이지 않게 수정
-        user: chatService.user1,
-        theme: const DefaultChatTheme(
-          primaryColor: AppColors.greenPrimaryColor,
-          secondaryColor: AppColors.faintGray,
-          inputBackgroundColor: AppColors.lightBlueGray,
-          inputTextColor: AppColors.black,
-          backgroundColor: AppColors.white,
-          inputBorderRadius: BorderRadius.zero,
-          receivedMessageBodyTextStyle: TextStyle(color: Colors.black),
-          // 보낸 메시지 스타일
-          sentMessageBodyTextStyle: TextStyle(
-            color: AppColors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            height: 1.5,
-          ),
-          attachmentButtonIcon: Icon(
-            Icons.camera_alt,
-            color: Colors.white,
-          ),
-          seenIcon: Text(
-            'read',
-            style: TextStyle(
-              fontSize: 10.0,
+      bottomsheet: _buildBottomChatInput(),
+      child: ListView.builder(
+        controller: _scrollController,
+        reverse: true,
+        itemCount: messages.length,
+        itemBuilder: (context, index) {
+          var message = messages[messages.length - 1 - index];
+          bool isSentByCurrentUser = message.user == currentUserId;
+
+          return _buildChatMessage(isSentByCurrentUser, context, message);
+        },
+      ),
+    );
+  }
+
+  Widget _buildBottomChatInput() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      height: 60.0,
+      color: AppColors.lightBlueGray,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: TextField(
+              controller: _controller,
+              decoration: const InputDecoration.collapsed(
+                hintText: "메시지를 입력하세요",
+              ),
             ),
           ),
-          // 모든 user들의 이름 색상을 검은색으로 설정
-          userAvatarNameColors: [
-            Colors.black,
-          ],
-          userNameTextStyle: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w300,
-            height: 1.333,
+          IconButton(
+            icon: const Icon(Icons.send),
+            onPressed: () {
+              _handleSendPressed();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChatMessage(
+      bool isSentByCurrentUser, BuildContext context, ChatMessage message) {
+    return Padding(
+      padding: isSentByCurrentUser
+          ? const EdgeInsets.only(right: 8.0)
+          : const EdgeInsets.only(left: 8.0),
+      child: Container(
+        alignment:
+            isSentByCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          margin: isSentByCurrentUser
+              ? const EdgeInsets.only(left: 40, bottom: 14)
+              : const EdgeInsets.only(right: 40, bottom: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: BoxDecoration(
+            color: isSentByCurrentUser
+                ? AppColors.greenPrimaryColor
+                : AppColors.extraLightGray,
+            borderRadius: isSentByCurrentUser
+                ? const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    bottomLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  )
+                : const BorderRadius.only(
+                    topRight: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                    topLeft: Radius.circular(20),
+                  ),
+          ),
+          constraints: BoxConstraints(
+            maxWidth: getScreenWidth(context) * 0.7,
+          ),
+          child: Text(
+            message.message,
+            // message.message + message.id.toString(),
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              height: 1.4,
+            ),
+            softWrap: true,
+            overflow: TextOverflow.clip,
           ),
         ),
       ),
     );
   }
 
-  void _handleSendPressed(types.PartialText message) {
-    final textMessage = types.TextMessage(
-      author: chatService.user1,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-      id: const Uuid().v4(), // 각 메시지의 id
-      text: message.text,
+  void _handleSendPressed() {
+    if (_controller.text.isNotEmpty) {
+      setState(() {
+        final newMessage = ChatMessage(
+            id: const Uuid().hashCode,
+            message: _controller.text,
+            createdAt: DateTime.now().toString(),
+            user: currentUserId);
+        messages.add(newMessage);
+        chatService.addMessage(newMessage);
+      });
+      _controller.clear();
+    }
+    // 화면 하단으로 스크롤 이동
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
+  }
 
-    chatService.addMessage(textMessage);
-    setState(() {});
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
