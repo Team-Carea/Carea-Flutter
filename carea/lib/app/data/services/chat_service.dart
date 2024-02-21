@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:carea/app/common/const/config.dart';
+import 'package:carea/app/common/util/auth_storage.dart';
+import 'package:carea/app/data/models/chat_message_list_model.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -13,33 +15,36 @@ class ChatService {
     id: '3', // 상대방(캐리아)의 id
     firstName: '캐리아',
   );
-  bool isLoading = false;
   late WebSocketChannel channel;
   final String roomId = '1'; // 임시 채팅방 Id
-  final String accessToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
+  bool isLoading = false;
+  Function(ChatMessage)? onMessageCallback;
 
   // 웹소켓 연결 초기화
-  void initializeWebsocket() {
+  void initializeWebsocket() async {
+    final accessToken = await AuthStorage.getAccessToken();
     channel = IOWebSocketChannel.connect(
         'ws://${AppConfig.localHost}/${AppConfig.chatRoomUrl}/$roomId?token=$accessToken');
   }
 
   // 화면에 메시지 추가 및 전송
-  void addMessage(types.Message message) {
-    messages.insert(0, message); // 화면 맨 아래에 메시지 추가
+  void addMessage(ChatMessage message) {
     isLoading = true;
-    if (message is types.TextMessage) {
-      final messagePayload = jsonEncode({
-        'user_id': user1.id,
-        'message': message.text,
-      });
-      channel.sink.add(messagePayload);
-    }
+    final messagePayload = jsonEncode({
+      'user_id': user1.id,
+      'message': message.message,
+    });
+    channel.sink.add(messagePayload);
+  }
+
+  void listenToMessages() {
+    channel.stream.listen((event) {
+      onMessageReceived(event, onMessageCallback);
+    });
   }
 
   // 메시지 수신 처리
-  void onMessageReceived(response) {
+  void onMessageReceived(response, Function(ChatMessage)? callback) {
     // 내가 보낸 메시지에 대한 서버측의 응답일 경우
     if (response[0] == '{') {
       print(response);
@@ -47,9 +52,19 @@ class ChatService {
     // 다른 사람으로부터 받은 메시지일 경우
     // TODO: 현재 메시지x, 받은 메시지임을 나타낼 것
     else {
-      // 채팅방의 마지막 메시지를 전달받은 내용으로 변경
-      messages.first = (messages.first as types.TextMessage).copyWith(
-          text: (messages.first as types.TextMessage).text + response);
+      // 상대방으로부터 전송받은 내용으로 채팅방의 마지막 메시지를 변경하기 위한 부분
+      if (callback != null) {
+        // 응답받고 ChatMessage 객체 만들어서 추가하기
+        //     final newMessage = ChatMessage(
+        //     id: const Uuid().hashCode,
+        //     message: _controller.text,
+        //     createdAt: DateTime.now().toString(),
+        //     user: currentUserId);
+        // messages.add(newMessage); // 여기서 callback(message); ?
+        print(response);
+      }
+      // messages.first = (messages.first as types.TextMessage).copyWith(
+      //     text: (messages.first as types.TextMessage).text + response);
     }
   }
 
