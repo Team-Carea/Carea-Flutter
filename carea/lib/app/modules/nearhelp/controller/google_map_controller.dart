@@ -1,5 +1,6 @@
 import 'package:carea/app/common/component/toast_popup.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:location/location.dart';
 
@@ -115,14 +116,15 @@ Future<Map<String, dynamic>> getHelpDataDetail(int id) async {
     );
     if (response.statusCode == 200) {
       var extracted = response.data['result'];
-      print(extracted['id']);
+      DateTime parsedCreatedAt = DateTime.parse(extracted['created_at']);
+      String formattedCreatedAt = DateFormat.yMMMd().format(parsedCreatedAt);
       return {
         'profileImageUrl': extracted['user']['profile_url'],
         'nickname': extracted['user']['nickname'],
         'title': extracted['title'],
         'content': extracted['content'],
         'location': extracted['location'],
-        'createdAt': extracted['created_at'],
+        'createdAt': formattedCreatedAt,
       };
     } else {
       print('서버 에러: 상태 코드 ${response.statusCode}');

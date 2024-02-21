@@ -1,6 +1,8 @@
+import 'package:carea/app/common/component/progress_bar.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/modules/nearhelp/view/check_near_screen.dart';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:carea/app/modules/nearhelp/controller/google_map_controller.dart';
