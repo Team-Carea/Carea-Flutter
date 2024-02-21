@@ -4,7 +4,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class ChatRoomService {
+class ChatService {
   final List<types.Message> messages = [];
   final user1 = const types.User(
     id: '2', // 나(자준청)의 id

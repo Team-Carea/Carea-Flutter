@@ -16,22 +16,23 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  final ChatRoomService chatRoomService = ChatRoomService();
+  final ChatService chatService = ChatService();
 
   @override
   void initState() {
     super.initState();
-    chatRoomService.initializeWebsocket();
+    chatService.initializeWebsocket();
     // 웹소켓을 통해 서버로부터의 이벤트 수신 대기
-    chatRoomService.channel.stream.listen((event) {
-      chatRoomService.onMessageReceived(event);
+    chatService.channel.stream.listen((event) {
+      chatService.onMessageReceived(event);
       setState(() {});
     });
+    // 기존 채팅 메시지 목록 조회
   }
 
   @override
   Widget build(BuildContext context) {
-    String titleName = chatRoomService.user2.firstName!;
+    String titleName = chatService.user2.firstName!;
 
     return DefaultLayout(
       appbar: AppBar(
@@ -40,7 +41,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
-            chatRoomService.closeWebsocket();
+            chatService.closeWebsocket();
             return Navigator.of(context).pop();
           },
         ),
@@ -75,10 +76,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         ],
       ),
       child: Chat(
-        messages: chatRoomService.messages,
+        messages: chatService.messages,
         onSendPressed: _handleSendPressed,
         // showUserNames: true, // 메시지마다 username 보이지 않게 수정
-        user: chatRoomService.user1,
+        user: chatService.user1,
         theme: const DefaultChatTheme(
           primaryColor: AppColors.greenPrimaryColor,
           secondaryColor: AppColors.faintGray,
@@ -120,13 +121,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   void _handleSendPressed(types.PartialText message) {
     final textMessage = types.TextMessage(
-      author: chatRoomService.user1,
+      author: chatService.user1,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       id: const Uuid().v4(), // 각 메시지의 id
       text: message.text,
     );
 
-    chatRoomService.addMessage(textMessage);
+    chatService.addMessage(textMessage);
     setState(() {});
   }
 }
