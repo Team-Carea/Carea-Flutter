@@ -105,10 +105,12 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
                   icon: markerIcon,
                   onTap: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const NearHelpCheck(helpId: 8)));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            NearHelpCheck(markerId: int.parse(place['id'])),
+                      ),
+                    );
                   },
                 );
               },

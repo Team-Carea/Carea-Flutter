@@ -1,15 +1,12 @@
-// nearhelp_screen -> 도움 올리기
-// check_near_screen -> 올려진 도움 상세 정보
-
 import 'package:carea/app/common/component/progress_bar.dart';
 import 'package:carea/app/modules/nearhelp/controller/google_map_controller.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class NearHelpCheck extends StatefulWidget {
-  final int helpId;
+  final int markerId;
 
-  const NearHelpCheck({Key? key, required this.helpId}) : super(key: key);
+  const NearHelpCheck({Key? key, required this.markerId}) : super(key: key);
 
   @override
   State<NearHelpCheck> createState() => _NearHelpCheckState();
@@ -21,7 +18,7 @@ class _NearHelpCheckState extends State<NearHelpCheck> {
   @override
   void initState() {
     super.initState();
-    _fetchHelpData = getHelpDataDetail(widget.helpId);
+    _fetchHelpData = getHelpDataDetail(widget.markerId);
   }
 
   @override
@@ -66,7 +63,7 @@ class _NearHelpCheckState extends State<NearHelpCheck> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           child: Text(
-                            data['nickname'],
+                            '${data['nickname']}',
                             style: const TextStyle(
                                 fontSize: 20, color: AppColors.black),
                           ),
@@ -80,7 +77,7 @@ class _NearHelpCheckState extends State<NearHelpCheck> {
                                 width: 350,
                                 height: 30,
                                 child: Text(
-                                  data['title'],
+                                  '${data['title']}',
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -93,7 +90,7 @@ class _NearHelpCheckState extends State<NearHelpCheck> {
                               width: 350,
                               height: 300,
                               child: Text(
-                                data['content'],
+                                '${data['content']}',
                                 style: const TextStyle(
                                     fontSize: 16, color: AppColors.black),
                                 textAlign: TextAlign.center,
@@ -114,7 +111,7 @@ class _NearHelpCheckState extends State<NearHelpCheck> {
                               width: 350,
                               height: 20,
                               child: Text(
-                                '올린 시간: ${data['createdAt']}',
+                                '${data['createdAt']}',
                                 style: const TextStyle(
                                     fontSize: 16, color: AppColors.black),
                                 textAlign: TextAlign.center,

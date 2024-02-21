@@ -4,8 +4,9 @@ import 'dart:convert';
 import 'package:location/location.dart';
 
 Dio dio = Dio();
-const gpsApiKey = gpsApiKey;
-const accessToken = accessToken;
+const gpsApiKey = 'AIzaSyBYBmG8iz2Cn8HJY6ecFduAzHZXcgqmUnM';
+const accessToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
 
 class LocationService {
   Location location = Location();
@@ -76,9 +77,9 @@ Future<List<Map<String, dynamic>>> getHelpData() async {
         },
       ),
     );
-    print(places);
     if (response.statusCode == 200) {
       var extracted = response.data['result'];
+      print(extracted);
       for (var item in extracted) {
         places.add({
           'id': item['id'].toString(),
@@ -112,9 +113,9 @@ Future<Map<String, dynamic>> getHelpDataDetail(int id) async {
         },
       ),
     );
-    print(response.data['result']);
     if (response.statusCode == 200) {
       var extracted = response.data['result'];
+      print(extracted['id']);
       return {
         'profileImageUrl': extracted['user']['profile_url'],
         'nickname': extracted['user']['nickname'],
