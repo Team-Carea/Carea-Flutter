@@ -48,6 +48,7 @@ dependencies:
   intl: ^0.19.0
   uuid: ^4.3.3
   fluttertoast: ^8.2.4
+  kpostal: ^0.5.1
   location:
     git:
       url: https://github.com/781flyingdutchman/flutterlocation.git

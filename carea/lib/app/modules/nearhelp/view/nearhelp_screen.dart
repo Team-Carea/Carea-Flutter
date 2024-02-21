@@ -1,11 +1,10 @@
-import 'package:carea/app/common/component/progress_bar.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/modules/nearhelp/view/check_near_screen.dart';
-
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:carea/app/modules/nearhelp/controller/google_map_controller.dart';
+import 'package:kpostal/kpostal.dart';
 
 class NearhelpScreen extends StatefulWidget {
   const NearhelpScreen({Key? key}) : super(key: key);
@@ -24,6 +23,10 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
+
+  String roadAddress = 'Not selected';
+  // String latitude = 'Not selected';
+  // String longitude = 'Not selected';
 
   void _sendData() async {
     String title = _titleController.text;
@@ -60,13 +63,11 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
     BitmapDescriptor.fromAssetImage(
             const ImageConfiguration(size: Size(20, 20)),
             "asset/img/redpin.png")
-        .then(
-      (icon) {
-        setState(() {
-          markerIcon = icon;
-        });
-      },
-    );
+        .then((icon) {
+      setState(() {
+        markerIcon = icon;
+      });
+    });
   }
 
   @override
@@ -97,26 +98,23 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
           onMapCreated: (GoogleMapController controller) {
             mapController = controller;
           },
-          // 도움 찾기 마커
           markers: Set<Marker>.of(
-            places.map(
-              (place) {
-                return Marker(
-                  markerId: MarkerId(place['id']),
-                  position: LatLng(place['latitude'], place['longitude']),
-                  icon: markerIcon,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            NearHelpCheck(markerId: int.parse(place['id'])),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+            places.map((place) {
+              return Marker(
+                markerId: MarkerId(place['id']),
+                position: LatLng(place['latitude'], place['longitude']),
+                icon: markerIcon,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          NearHelpCheck(markerId: int.parse(place['id'])),
+                    ),
+                  );
+                },
+              );
+            }),
           ),
         ),
       ),
@@ -132,7 +130,6 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
     );
   }
 
-  //도움 등록하기
   void _showAddHelpDialog(BuildContext context) {
     _titleController.clear();
     _contentController.clear();
@@ -189,9 +186,23 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
                         _buildTextField(
                           controller: _addressController,
                           hintText: '주소를 선택해주세요.',
+                          readOnly: true,
                           suffixIcon: IconButton(
                             icon: const Icon(Icons.map),
-                            onPressed: () {},
+                            onPressed: () async {
+                              final Kpostal result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => KpostalView(
+                                        useLocalServer: true, localPort: 1024)),
+                              );
+                              setState(
+                                () {
+                                  _addressController.text = result.address;
+                                  print(result.address);
+                                },
+                              );
+                            },
                           ),
                         ),
                         Expanded(
@@ -226,11 +237,11 @@ class _NearhelpScreenState extends State<NearhelpScreen> {
     );
   }
 
-  //도움 등록 폼
   Widget _buildTextField({
     required TextEditingController controller,
     required String hintText,
     Widget? suffixIcon,
+    bool? readOnly,
   }) {
     return Container(
       padding: const EdgeInsets.all(8.0),

@@ -2,7 +2,6 @@ import 'package:carea/app/common/component/progress_bar.dart';
 import 'package:carea/app/modules/nearhelp/controller/google_map_controller.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
 class NearHelpCheck extends StatefulWidget {
   final int markerId;

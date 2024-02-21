@@ -80,7 +80,6 @@ Future<List<Map<String, dynamic>>> getHelpData() async {
     );
     if (response.statusCode == 200) {
       var extracted = response.data['result'];
-      print(extracted);
       for (var item in extracted) {
         places.add({
           'id': item['id'].toString(),
