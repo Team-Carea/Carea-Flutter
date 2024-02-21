@@ -66,8 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomElevatedButton(
                   text: '로그인',
                   screenRoute: () async {
-                    // 로그인 요청
-                    // 테스트 유저 정보: {"email": "careleaver@gmail.com", "password": "carealeaver123"}
+                    // 테스트 유저 '자준청' 정보: {"email": "careleaver@gmail.com", "password": "carealeaver123"}
                     final response = await dio.post(
                       'http://${AppConfig.localHost}/users/login/',
                       data: {"email": email, "password": password},
