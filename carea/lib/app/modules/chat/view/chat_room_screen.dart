@@ -32,13 +32,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   void initState() {
     super.initState();
     chatService.initializeWebsocket();
-    // 웹소켓을 통해 서버로부터의 이벤트 수신 대기
     chatService.onMessageCallback = (ChatMessage message) {
       setState(() {
         messages.add(message);
       });
     };
-    chatService.listenToMessages();
     // 메시지 로드
     _fetchMessages(widget.id.toString());
     // chatRoomService.getChatMessages(widget.id.toString());
@@ -46,22 +44,28 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   Future<void> _fetchMessages(String roomId) async {
     var dio = Dio();
-    final accessToken = await AuthStorage.getAccessToken();
+    try {
+      final accessToken = await AuthStorage.getAccessToken();
 
-    final response = await dio.get(
-      'http://${AppConfig.localHost}/chats/$roomId/messages/',
-      options: Options(
-        headers: {
-          'Authorization': accessToken,
-        },
-      ),
-    );
+      final response = await dio.get(
+        'http://${AppConfig.localHost}/chats/$roomId/messages/',
+        options: Options(
+          headers: {
+            'Authorization':
+                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NzE1Mjg2LCJpYXQiOjE3MDg1NDI0ODYsImp0aSI6ImFhMjg2NTgzNjQ5ODQwMWE4YzViNGI2YmFiMjEzMTM3IiwidXNlcl9pZCI6Mn0.yO0D5ZTmjjKuvkR7NdEAuUgQQMI1UDe9ecPzVL6oLow'
+            // TODO: 여기 왜 제대로 처리안되냐;..
+          },
+        ),
+      );
 
-    List<ChatMessage> fetchedMessages =
-        ChatMessageList.fromJson(response.data).result!;
-    setState(() {
-      messages = fetchedMessages;
-    });
+      List<ChatMessage> fetchedMessages =
+          ChatMessageList.fromJson(response.data).result!;
+      setState(() {
+        messages = fetchedMessages;
+      });
+    } catch (e) {
+      print('Exception occurred: $e');
+    }
   }
 
   @override
