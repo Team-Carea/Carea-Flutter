@@ -1,3 +1,4 @@
+import 'package:carea/app/common/component/bottom_bar.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:carea/app/modules/user/view/login_screen.dart';
@@ -31,10 +32,10 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       // 두가지 토큰이 전부 존재할 경우
       // TODO: 실제로는 일치 여부 확인까지 필요함
-      // Navigator.of(context).pushAndRemoveUntil(
-      //   MaterialPageRoute(builder: (_) => const RootTab()),
-      //   (route) => false,
-      // );
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const RootTab()),
+        (route) => false,
+      );
     }
   }
 

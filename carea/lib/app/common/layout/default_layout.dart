@@ -4,11 +4,13 @@ class DefaultLayout extends StatelessWidget {
   final AppBar? appbar;
   final Color? backgroundColor;
   final Widget child;
+  final Widget? bottomsheet;
 
   const DefaultLayout({
     this.appbar,
     this.backgroundColor,
     required this.child,
+    this.bottomsheet,
     super.key,
   });
 
@@ -18,6 +20,7 @@ class DefaultLayout extends StatelessWidget {
       backgroundColor: backgroundColor ?? Colors.white,
       appBar: appbar,
       body: child,
+      bottomSheet: bottomsheet,
     );
   }
 }
