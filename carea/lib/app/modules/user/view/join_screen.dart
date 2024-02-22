@@ -2,7 +2,6 @@ import 'package:carea/app/common/layout/root_tab.dart';
 import 'package:carea/app/common/component/custom_button.dart';
 import 'package:carea/app/common/component/custom_text_form_field.dart';
 import 'package:carea/app/common/const/app_colors.dart';
-import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
@@ -10,7 +9,6 @@ import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:carea/app/common/util/random_profile.dart';
 import 'package:carea/app/data/models/user_model.dart';
 import 'package:carea/app/data/services/user_service.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class JoinScreen extends StatefulWidget {
@@ -102,7 +100,6 @@ class _JoinScreenState extends State<JoinScreen> {
                     );
 
                     final response = await userService.signUp(user);
-                    print(response);
 
                     final accessToken = response.accessToken;
                     final refreshToken = response.refreshToken;

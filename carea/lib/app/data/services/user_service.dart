@@ -15,7 +15,6 @@ class UserService {
       final response = await dio.post(url, data: data);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('회원가입 성공: ${response.data}');
         return SignUpResult.fromJson(response.data);
       } else {
         throw Exception('Failed to signup: ${response.data}');

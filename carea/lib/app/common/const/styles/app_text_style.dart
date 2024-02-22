@@ -29,7 +29,7 @@ const screenContentTitleTextStyle = TextStyle(
 );
 const screenContentTitleBlueTextStyle = TextStyle(
   fontSize: 20,
-  fontWeight: FontWeight.w700,
+  fontWeight: FontWeight.w900,
   color: AppColors.bluePrimaryColor,
 );
 

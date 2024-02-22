@@ -1,10 +1,7 @@
-import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/common/layout/root_tab.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
-import 'package:carea/app/data/models/user_model.dart';
 import 'package:carea/app/modules/user/view/login_screen.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
