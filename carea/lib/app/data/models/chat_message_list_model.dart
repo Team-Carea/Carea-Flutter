@@ -22,7 +22,7 @@ class ChatMessageList {
 class ChatMessage {
   final int id;
   final String message;
-  final String createdAt;
+  final DateTime createdAt;
   final int user;
 
   ChatMessage(
@@ -35,7 +35,7 @@ class ChatMessage {
     return ChatMessage(
       id: json['id'],
       message: json['message'],
-      createdAt: json['created_at'],
+      createdAt: DateTime.parse(json['created_at']),
       user: json['user'],
     );
   }

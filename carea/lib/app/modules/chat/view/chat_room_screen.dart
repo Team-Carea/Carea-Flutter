@@ -76,7 +76,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
             chatService.closeWebsocket();
-            return Navigator.of(context).pop();
+            // 가장 최신 메시지 return
+            ChatMessage updatedLatestMessage = messages[messages.length - 1];
+            return Navigator.of(context).pop(updatedLatestMessage);
           },
         ),
         actions: <Widget>[
@@ -206,7 +208,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         final newMessage = ChatMessage(
             id: const Uuid().hashCode,
             message: _controller.text,
-            createdAt: DateTime.now().toString(),
+            createdAt: DateTime.now(),
             user: currentUserId);
         messages.add(newMessage);
         chatService.addMessage(newMessage);
