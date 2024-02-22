@@ -1,20 +1,40 @@
 import 'package:carea/app/common/component/custom_button.dart';
-import 'package:carea/app/common/component/notice_dialog.dart';
 import 'package:carea/app/common/component/sentence_card.dart';
+import 'package:carea/app/common/component/toast_popup.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
+import 'package:carea/app/data/models/gemini_data_model.dart';
+import 'package:carea/app/data/services/gemini_service.dart';
+import 'package:carea/app/data/services/help_confirm_service.dart';
 import 'package:flutter/material.dart';
 
 class HelperConfirmScreen extends StatefulWidget {
-  const HelperConfirmScreen({super.key});
+  final String roomId;
+  const HelperConfirmScreen({super.key, required this.roomId});
 
   @override
   State<HelperConfirmScreen> createState() => _HelperConfirmScreenState();
 }
 
 class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
+  late HelpConfirmService helpConfirmService;
+  String sentence = '아직 생성된 문장이 없습니다.';
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    helpConfirmService = HelpConfirmService();
+    helpConfirmService.initializeWebsocket(widget.roomId);
+
+    // onResponse 콜백 설정
+    helpConfirmService.onResponse = () {
+      careaToast(toastMsg: '전송이 완료되었습니다.');
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
@@ -23,6 +43,7 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
+            helpConfirmService.dispose();
             Navigator.pop(context);
           },
         ),
@@ -43,15 +64,15 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
                   style: screenContentTitleTextStyle,
                 ),
                 TextButton(
-                    onPressed: () {},
+                    onPressed: updateSentence,
                     child: const Text(
                       '생성하기',
                       style: screenContentTitleBlueTextStyle,
                     )),
               ],
             ),
-            const SentenceCard(
-              text: '아직 생성된 문장이 없습니다.',
+            SentenceCard(
+              text: sentence,
               bgcolor: AppColors.faintGray,
               textStyle: sentenceTextStyle,
             ),
@@ -63,12 +84,53 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
             const SizedBox(height: 12),
             CustomElevatedButton(
               text: '전송하기',
-              screenRoute: () => showLevelUpDialog(context),
+              screenRoute: () {
+                if (helpConfirmService.isInitialized) {
+                  helpConfirmService
+                      .sendSentence(sentence.replaceAll('\n', ''));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('웹소켓이 아직 초기화되지 않았습니다.'),
+                    ),
+                  );
+                }
+              },
               icon: Icons.send,
             )
           ],
         ),
       ),
     );
+  }
+
+  Future<void> updateSentence() async {
+    setState(() {
+      isLoading = true;
+      sentence = '생성 중...';
+    });
+
+    try {
+      GeminiResponseModel responseModel = await generateRandomSentence();
+      String text = responseModel.text;
+      if (text.length > 20) {
+        List<String> splitText = [];
+        for (int i = 0; i < text.length; i += 20) {
+          int end = (i + 20 < text.length) ? i + 20 : text.length;
+          splitText.add(text.substring(i, end));
+        }
+        // 분할된 문자열을 줄바꿈 문자로 연결
+        text = splitText.join('\n');
+      }
+      setState(() {
+        sentence = text;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        sentence = '문장 생성에 실패했습니다.';
+        isLoading = false;
+      });
+    }
   }
 }
