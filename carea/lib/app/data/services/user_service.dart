@@ -11,12 +11,8 @@ class UserService {
     const url = 'http://${AppConfig.localHost}/${AppConfig.signUpUrl}/';
     final data = user.toJson();
 
-    print(data);
-
     try {
       final response = await dio.post(url, data: data);
-
-      print(response);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('회원가입 성공: ${response.data}');
@@ -33,7 +29,7 @@ class UserService {
   Future<UserProfile> getUserProfile(String accessToken) async {
     final accessToken = await AuthStorage.getAccessToken();
     const url = 'http://${AppConfig.localHost}/${AppConfig.profileUrl}/';
-    dio.options.headers['Authorization'] = accessToken;
+    dio.options.headers['Authorization'] = 'Bearer $accessToken';
 
     try {
       final response = await dio.get(url);

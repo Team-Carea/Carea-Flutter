@@ -1,19 +1,19 @@
 class SignUpResult {
   final String accessToken;
   final String refreshToken;
-  final User user;
+  final UserProfile userProfile;
 
   SignUpResult({
     required this.accessToken,
     required this.refreshToken,
-    required this.user,
+    required this.userProfile,
   });
 
   factory SignUpResult.fromJson(Map<String, dynamic> json) {
     return SignUpResult(
       accessToken: json['access'],
       refreshToken: json['refresh'],
-      user: json['user'],
+      userProfile: UserProfile.fromJson(json['user']),
     );
   }
 }
