@@ -97,6 +97,8 @@ class _JoinScreenState extends State<JoinScreen> {
                       password1: password,
                       password2: password,
                       nickname: nickname,
+                      profileUrl: getRandomProfileUrl(),
+                      introduction: introduction,
                     );
 
                     final response = await userService.signUp(user);
