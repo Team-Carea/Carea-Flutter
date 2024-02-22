@@ -5,6 +5,7 @@ class AppConfig {
   // static const String baseUrl = 'https://$apiHost';
   static const String signInUrl = 'auth/signin';
   static const String signUpUrl = 'users/registration';
+  static const String logOutUrl = 'users/logout';
   static const String googleSignInUrl = 'auth/google/login';
   static const String communityUrl = 'posts';
   static const String chatUrl = 'chats';

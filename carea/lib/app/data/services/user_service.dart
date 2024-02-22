@@ -25,6 +25,24 @@ class UserService {
     }
   }
 
+  // POST: 로그아웃
+  Future<void> logOut(String refresh) async {
+    const url = 'http://${AppConfig.localHost}/${AppConfig.logOutUrl}/';
+    final data = {'refresh': refresh};
+
+    try {
+      final response = await dio.post(url, data: data);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('로그아웃 성공: ${response.data}');
+      } else {
+        throw Exception('Failed to logout: ${response.data}');
+      }
+    } catch (e) {
+      throw Exception('Failed to logout: $e');
+    }
+  }
+
   // GET: 내 프로필 조회
   Future<UserProfile> getUserProfile(String accessToken) async {
     final accessToken = await AuthStorage.getAccessToken();
