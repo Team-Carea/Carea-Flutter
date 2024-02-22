@@ -25,7 +25,6 @@ class ChatService {
     final accessToken = await AuthStorage.getAccessToken();
     channel = IOWebSocketChannel.connect(
         'ws://${AppConfig.localHost}/${AppConfig.chatRoomUrl}/$roomId?token=$accessToken');
-
     isInitialized = true; // 웹소켓 연결 초기화 완료
     // 웹소켓을 통해 서버로부터의 이벤트 수신 대기
     channel.stream.listen((event) {
@@ -70,7 +69,7 @@ class ChatService {
   }
 
   // 웹소켓 연결 종료
-  void closeWebsocket() {
+  void dispose() {
     channel.sink.close();
   }
 }

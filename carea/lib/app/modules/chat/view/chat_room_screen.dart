@@ -60,7 +60,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         messages = fetchedMessages;
       });
     } catch (e) {
-      print('Exception occurred: $e');
+      throw ('Exception occurred: $e');
     }
   }
 
@@ -75,7 +75,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
-            chatService.closeWebsocket();
+            chatService.dispose();
             // 가장 최신 메시지 return
             ChatMessage updatedLatestMessage = messages[messages.length - 1];
             return Navigator.of(context).pop(updatedLatestMessage);
@@ -85,7 +85,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           Padding(
             padding: EdgeInsets.only(
                 right: MediaQuery.of(context).size.width * 0.05),
-            // TODO: 도움 인증화면 라우팅
+            // TODO: Helper Seeker에 따라 서로 다른 도움 인증화면 라우팅
             child: ElevatedButton(
               onPressed: () {
                 // Navigator.push(

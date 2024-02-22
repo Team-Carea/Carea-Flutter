@@ -80,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     AuthStorage.saveRefreshToken(refreshToken);
 
                     // 정상 로그인 -> RootTab 이동
+                    if (!mounted) return;
                     Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const RootTab()));
                   },
