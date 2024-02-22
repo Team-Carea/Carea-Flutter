@@ -15,8 +15,7 @@ class ChatRoomService {
         'http://${AppConfig.localHost}/${AppConfig.chatRoomListUrl}/',
         options: Options(
           headers: {
-            'Authorization':
-                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NzE1Mjg2LCJpYXQiOjE3MDg1NDI0ODYsImp0aSI6ImFhMjg2NTgzNjQ5ODQwMWE4YzViNGI2YmFiMjEzMTM3IiwidXNlcl9pZCI6Mn0.yO0D5ZTmjjKuvkR7NdEAuUgQQMI1UDe9ecPzVL6oLow',
+            'Authorization': 'Bearer $accessToken',
           },
         ),
       );

@@ -50,11 +50,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       final response = await dio.get(
         'http://${AppConfig.localHost}/chats/$roomId/messages/',
         options: Options(
-          headers: {
-            'Authorization':
-                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NzE1Mjg2LCJpYXQiOjE3MDg1NDI0ODYsImp0aSI6ImFhMjg2NTgzNjQ5ODQwMWE4YzViNGI2YmFiMjEzMTM3IiwidXNlcl9pZCI6Mn0.yO0D5ZTmjjKuvkR7NdEAuUgQQMI1UDe9ecPzVL6oLow'
-            // TODO: 여기 왜 제대로 처리안되냐;..
-          },
+          headers: {'Authorization': 'Bearer $accessToken'},
         ),
       );
 
