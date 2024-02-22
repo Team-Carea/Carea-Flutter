@@ -32,13 +32,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   void initState() {
     super.initState();
     chatService.initializeWebsocket();
-    // 웹소켓을 통해 서버로부터의 이벤트 수신 대기
     chatService.onMessageCallback = (ChatMessage message) {
       setState(() {
         messages.add(message);
       });
     };
-    chatService.listenToMessages();
     // 메시지 로드
     _fetchMessages(widget.id.toString());
     // chatRoomService.getChatMessages(widget.id.toString());
@@ -46,22 +44,24 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   Future<void> _fetchMessages(String roomId) async {
     var dio = Dio();
-    final accessToken = await AuthStorage.getAccessToken();
+    try {
+      final accessToken = await AuthStorage.getAccessToken();
 
-    final response = await dio.get(
-      'http://${AppConfig.localHost}/chats/$roomId/messages/',
-      options: Options(
-        headers: {
-          'Authorization': accessToken,
-        },
-      ),
-    );
+      final response = await dio.get(
+        'http://${AppConfig.localHost}/chats/$roomId/messages/',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
 
-    List<ChatMessage> fetchedMessages =
-        ChatMessageList.fromJson(response.data).result!;
-    setState(() {
-      messages = fetchedMessages;
-    });
+      List<ChatMessage> fetchedMessages =
+          ChatMessageList.fromJson(response.data).result!;
+      setState(() {
+        messages = fetchedMessages;
+      });
+    } catch (e) {
+      print('Exception occurred: $e');
+    }
   }
 
   @override
@@ -76,7 +76,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
             chatService.closeWebsocket();
-            return Navigator.of(context).pop();
+            // 가장 최신 메시지 return
+            ChatMessage updatedLatestMessage = messages[messages.length - 1];
+            return Navigator.of(context).pop(updatedLatestMessage);
           },
         ),
         actions: <Widget>[
@@ -206,7 +208,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         final newMessage = ChatMessage(
             id: const Uuid().hashCode,
             message: _controller.text,
-            createdAt: DateTime.now().toString(),
+            createdAt: DateTime.now(),
             user: currentUserId);
         messages.add(newMessage);
         chatService.addMessage(newMessage);

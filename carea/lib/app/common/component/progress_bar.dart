@@ -33,6 +33,7 @@ class _ExpBarState extends State<ExpBar> {
             lineHeight: 20,
             animationDuration: 1000,
             percent: widget.exp,
+            barRadius: const Radius.circular(20),
             center: Text(percentText),
             linearGradient: const LinearGradient(
               colors: <Color>[

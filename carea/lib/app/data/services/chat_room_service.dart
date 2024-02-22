@@ -15,7 +15,7 @@ class ChatRoomService {
         'http://${AppConfig.localHost}/${AppConfig.chatRoomListUrl}/',
         options: Options(
           headers: {
-            'Authorization': accessToken,
+            'Authorization': 'Bearer $accessToken',
           },
         ),
       );

@@ -20,7 +20,7 @@ class ChatRoom {
   final int id;
   final int help;
   final String latestMessage;
-  final String updatedAt;
+  final DateTime updatedAt;
   final Opponent opponent;
 
   ChatRoom(
@@ -35,7 +35,7 @@ class ChatRoom {
       id: json['id'],
       help: json['help'],
       latestMessage: json['latest_message'],
-      updatedAt: json['updated_at'],
+      updatedAt: DateTime.parse(json['updated_at']),
       opponent: Opponent.fromJson(json['opponent']),
     );
   }

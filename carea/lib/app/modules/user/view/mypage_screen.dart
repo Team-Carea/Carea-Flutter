@@ -43,6 +43,9 @@ class MypageScreen extends StatelessWidget {
               Column(
                 children: [
                   SizedBox(height: 50),
+                  ExpBar(
+                    exp: 0.5,
+                  ),
                   ExpBar(exp: 0.5),
                   SizedBox(height: 50),
                   Text(
