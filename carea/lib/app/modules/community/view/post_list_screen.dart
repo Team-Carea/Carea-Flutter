@@ -31,10 +31,11 @@ class _PostListScreenState extends State<PostListScreen> {
         return 'future';
       case '생활':
         return 'life';
-      case '자유':
+      case '자유 게시판':
         return 'free';
       default:
-        return '';
+        '전체 게시판';
+        return 'latest';
     }
   }
 
@@ -151,8 +152,11 @@ class _PostListScreenState extends State<PostListScreen> {
         onPressed: () {
           _navigateAndCreatePost();
         },
-        backgroundColor: AppColors.greenPrimaryColor,
-        child: const Icon(Icons.add),
+        backgroundColor: AppColors.yellowPrimaryColor,
+        child: const Icon(
+          Icons.add,
+          color: AppColors.white,
+        ),
       ),
     );
   }

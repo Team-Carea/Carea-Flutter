@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
+const accessToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
+
 final Dio dio = Dio();
 
 class Post {
@@ -78,7 +81,14 @@ class Posts {
   Future<void> _fetchPostsForCategory(String category) async {
     String baseUrl = 'http://10.0.2.2:8000/posts/$category/';
     try {
-      final response = await dio.get(baseUrl);
+      final response = await dio.get(
+        baseUrl,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
       if (response.statusCode == 200) {
         List<dynamic> result = response.data['result'];
         final List<Post> loadedPosts =
@@ -98,7 +108,14 @@ class Posts {
   Future<Post?> getPostDetail(int id) async {
     String baseUrl = 'http://10.0.2.2:8000/posts/$id/';
     try {
-      final response = await dio.get(baseUrl);
+      final response = await dio.get(
+        baseUrl,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
       if (response.statusCode == 200) {
         Map<String, dynamic> extractedData = response.data;
         print(extractedData);
@@ -121,6 +138,11 @@ Future<void> createPost(String title, String content, String category) async {
   try {
     final response = await dio.post(
       baseUrl,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+        },
+      ),
       data: {
         'title': title,
         'content': content,

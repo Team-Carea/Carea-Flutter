@@ -48,6 +48,12 @@ class Comments {
     });
   }
 
+  Future<List<Comment>> fetchComments(String postId) async {
+    final comments = Comments();
+    await comments.getCommentDetail(postId);
+    return comments.items;
+  }
+
   List<Comment> get items => _items;
 
   Future<void> getCommentDetail(String postId) async {
@@ -73,8 +79,7 @@ class Comments {
 
 // 댓글 등록
 
-Future<void> postComment(
-    int postId, String content, String userNickname) async {
+Future<void> postComment(int postId, String content, String nickname) async {
   try {
     final response = await dio.post(
       'http://10.0.2.2:8000/posts/$postId/comments/',
@@ -82,7 +87,7 @@ Future<void> postComment(
         'post_id': postId,
         'content': content,
         'user': {
-          'nickname': userNickname,
+          'nickname': nickname,
         },
       },
     );
