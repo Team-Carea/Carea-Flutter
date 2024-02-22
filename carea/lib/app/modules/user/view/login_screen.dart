@@ -3,6 +3,7 @@ import 'package:carea/app/common/component/custom_text_form_field.dart';
 import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
+import 'package:carea/app/common/layout/root_tab.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:carea/app/modules/user/view/join_screen.dart';
@@ -66,8 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomElevatedButton(
                   text: '로그인',
                   screenRoute: () async {
-                    // 로그인 요청
-                    // 테스트 유저 정보: {"email": "careleaver@gmail.com", "password": "carealeaver123"}
+                    // 테스트 유저 '자준청' 정보: {"email": "careleaver@gmail.com", "password": "carealeaver123"}
                     final response = await dio.post(
                       'http://${AppConfig.localHost}/users/login/',
                       data: {"email": email, "password": password},
@@ -80,8 +80,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     AuthStorage.saveRefreshToken(refreshToken);
 
                     // 정상 로그인 -> RootTab 이동
-                    // Navigator.of(context)
-                    //     .push(MaterialPageRoute(builder: (_) => RootTab()));
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const RootTab()));
                   },
                 ),
                 SizedBox(height: getScreenWidth(context) * 0.01),

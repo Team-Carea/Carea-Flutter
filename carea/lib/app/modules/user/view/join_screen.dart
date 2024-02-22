@@ -1,3 +1,4 @@
+import 'package:carea/app/common/layout/root_tab.dart';
 import 'package:carea/app/common/component/custom_button.dart';
 import 'package:carea/app/common/component/custom_text_form_field.dart';
 import 'package:carea/app/common/const/app_colors.dart';
@@ -6,6 +7,9 @@ import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
+import 'package:carea/app/common/util/random_profile.dart';
+import 'package:carea/app/data/models/user_model.dart';
+import 'package:carea/app/data/services/user_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +28,7 @@ class _JoinScreenState extends State<JoinScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dio = Dio();
+    UserService userService = UserService();
 
     return DefaultLayout(
       child: SingleChildScrollView(
@@ -88,30 +92,28 @@ class _JoinScreenState extends State<JoinScreen> {
                 CustomElevatedButton(
                   text: '회원 가입하기',
                   screenRoute: () async {
-                    // 회원가입 요청
-                    // test data
-                    final response = await dio.post(
-                      'http://${AppConfig.localHost}/users/registration/',
-                      data: {
-                        "email": "jiny@gmail.com",
-                        "password1": "carealeaver123",
-                        "password2": "carealeaver123",
-                        "nickname": "지니신",
-                        "profile_url":
-                            "https://storage.googleapis.com/carea/profile-imgs/careleaver.jpeg", // 필수 아님
-                        "introduction": "저는 금융지식에 관심이 많아요." // 필수 아님
-                      },
+                    User user = User(
+                      email: email,
+                      password1: password,
+                      password2: password,
+                      nickname: nickname,
+                      profileUrl: getRandomProfileUrl(),
+                      introduction: introduction,
                     );
 
-                    final accessToken = response.data['access'];
-                    final refreshToken = response.data['refresh'];
+                    final response = await userService.signUp(user);
+                    print(response);
+
+                    final accessToken = response.accessToken;
+                    final refreshToken = response.refreshToken;
 
                     AuthStorage.saveAccessToken(accessToken);
                     AuthStorage.saveRefreshToken(refreshToken);
 
                     // 정상 회원가입 -> RootTab 이동
-                    // Navigator.of(context)
-                    //     .push(MaterialPageRoute(builder: (_) => RootTab()));
+                    if (!mounted) return;
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const RootTab()));
                   },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.01),
