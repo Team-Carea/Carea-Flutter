@@ -20,16 +20,17 @@ class ChatMessageList {
 }
 
 class ChatMessage {
-  final int id;
+  final int? id;
   final String message;
   final DateTime createdAt;
-  final int user;
+  final int? user;
 
-  ChatMessage(
-      {required this.id,
-      required this.message,
-      required this.createdAt,
-      required this.user});
+  ChatMessage({
+    this.id,
+    required this.message,
+    required this.createdAt,
+    this.user,
+  });
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
     return ChatMessage(

@@ -24,19 +24,20 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  final ChatService chatService = ChatService();
+  late ChatService chatService;
   final ChatRoomService chatRoomService = ChatRoomService();
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  // 채팅목록 상태관리를 위한 변수
+
   List<ChatMessage> messages = [];
-  int? currentOpponentUserId;
+  late int currentOpponentUserId;
   String? currentUserType;
   bool isCurrentUserTypeInitialized = false;
 
   @override
   void initState() {
     super.initState();
+    chatService = ChatService(roomId: widget.id.toString());
     chatService.initializeWebsocket();
     chatService.onMessageCallback = (ChatMessage message) {
       setState(() {
@@ -103,7 +104,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         itemCount: messages.length,
         itemBuilder: (context, index) {
           var message = messages[messages.length - 1 - index];
-          bool isSentByCurrentUser = message.user == currentOpponentUserId;
+          bool isSentByCurrentUser = message.user != currentOpponentUserId;
           return _buildChatMessage(isSentByCurrentUser, context, message);
         },
       ),
@@ -190,11 +191,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     if (_controller.text.isNotEmpty) {
       setState(() {
         final newMessage = ChatMessage(
-          id: const Uuid().hashCode,
           message: _controller.text,
           createdAt: DateTime.now(),
-          user: currentOpponentUserId!,
         );
+        // 화면에 메시지 추가 및 전송
         messages.add(newMessage);
         chatService.addMessage(newMessage);
       });

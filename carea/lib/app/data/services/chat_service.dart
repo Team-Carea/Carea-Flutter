@@ -8,35 +8,30 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChatService {
   final List<types.Message> messages = [];
-  final user1 = const types.User(
-    id: '2', // 나(자준청)의 id
-  );
-  final user2 = const types.User(
-    id: '3', // 상대방(캐리아)의 id
-    firstName: '캐리아',
-  );
+  final String roomId;
   late WebSocketChannel channel;
-  bool isInitialized = false; // 웹소켓 연결 초기화 상태를 추적하는 변수
-  final String roomId = '1'; // 임시 채팅방 Id
+  bool isWebSocketInitialized = false;
   Function? onMessageCallback;
 
-  // 웹소켓 연결 초기화
+  ChatService({required this.roomId});
+
   void initializeWebsocket() async {
     final accessToken = await AuthStorage.getAccessToken();
+    // 웹소켓 연결 초기화
     channel = IOWebSocketChannel.connect(
         'ws://${AppConfig.localHost}/${AppConfig.chatRoomUrl}/$roomId?token=$accessToken');
-    isInitialized = true; // 웹소켓 연결 초기화 완료
+    isWebSocketInitialized = true;
+
     // 웹소켓을 통해 서버로부터의 이벤트 수신 대기
     channel.stream.listen((event) {
       onMessageReceived(event, onMessageCallback);
     });
   }
 
-  // 화면에 메시지 추가 및 전송
+  // 웹소켓 통해 메시지 전송
   void addMessage(ChatMessage message) {
-    if (isInitialized) {
+    if (isWebSocketInitialized) {
       final messagePayload = jsonEncode({
-        'user_id': user1.id,
         'message': message.message,
       });
       channel.sink.add(messagePayload);
