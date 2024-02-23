@@ -27,41 +27,39 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   // 채팅목록 상태관리를 위한 변수
   List<ChatMessage> messages = [];
   int currentUserId = 2; // 나(자준청)의 id
+  late String currentUserType;
 
   @override
   void initState() {
     super.initState();
+    // 웹소켓 초기화
     chatService.initializeWebsocket();
     chatService.onMessageCallback = (ChatMessage message) {
       setState(() {
         messages.add(message);
       });
     };
-    // 메시지 로드
-    _fetchMessages(widget.id.toString());
-    // chatRoomService.getChatMessages(widget.id.toString());
+    // 채팅 메시지 로드
+    loadChatMessages(widget.id.toString());
+    // 도움요청/제공자 판별
+    setCurrentUserType(widget.id.toString());
   }
 
-  Future<void> _fetchMessages(String roomId) async {
-    var dio = Dio();
+  Future<void> loadChatMessages(String roomId) async {
     try {
-      final accessToken = await AuthStorage.getAccessToken();
-
-      final response = await dio.get(
-        'http://${AppConfig.localHost}/chats/$roomId/messages/',
-        options: Options(
-          headers: {'Authorization': 'Bearer $accessToken'},
-        ),
-      );
-
-      List<ChatMessage> fetchedMessages =
-          ChatMessageList.fromJson(response.data).result!;
+      List<ChatMessage> chatMessageList =
+          await chatRoomService.getChatMessages(roomId);
       setState(() {
-        messages = fetchedMessages;
+        messages = chatMessageList;
       });
     } catch (e) {
-      throw ('Exception occurred: $e');
+      print('Error loading messages: $e');
     }
+  }
+
+  Future<void> setCurrentUserType(String roomId) async {
+    currentUserType = await chatRoomService.getUserType(roomId);
+    print(currentUserType);
   }
 
   @override
