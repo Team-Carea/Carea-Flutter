@@ -94,7 +94,7 @@ class helpComfirmButton extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => currentUserType == 'helper'
                 ? HelperConfirmScreen(roomId: roomId)
-                : const SeekerConfirmScreen(),
+                : SeekerConfirmScreen(roomId: roomId),
           ),
         );
       },
@@ -110,6 +110,46 @@ class helpComfirmButton extends StatelessWidget {
             const EdgeInsets.symmetric(horizontal: 8)),
       ),
       child: const Text('도움 인증'),
+    );
+  }
+}
+
+class VoiceRecordButton extends StatefulWidget {
+  final VoidCallback onPressed;
+  final Function onRecordingStateChanged; // 녹음 상태 변경 콜백 추가
+
+  const VoiceRecordButton({
+    super.key,
+    required this.onPressed,
+    required this.onRecordingStateChanged,
+  });
+
+  @override
+  State<VoiceRecordButton> createState() => _VoiceRecordButtonState();
+}
+
+class _VoiceRecordButtonState extends State<VoiceRecordButton> {
+  bool isRecording = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: const BoxDecoration(
+        color: AppColors.redAccentColor,
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        icon:
+            Icon(isRecording ? Icons.mic : Icons.mic_none, color: Colors.white),
+        iconSize: 50,
+        onPressed: () {
+          setState(() {
+            widget.onRecordingStateChanged(); // 상태 변경을 부모 위젯에 알림
+          });
+          widget.onPressed(); // 부모 위젯에서 전달받은 onPressed 콜백 실행
+        },
+      ),
     );
   }
 }
