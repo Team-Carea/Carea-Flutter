@@ -61,15 +61,7 @@ class ChatRoomService {
   // GET: 도움 요청자/제공자 판별
   Future<String> getUserType(String roomId) async {
     final accessToken = await AuthStorage.getAccessToken();
-    dio.interceptors.add(
-      LogInterceptor(
-          responseBody: true,
-          error: true,
-          requestHeader: true,
-          responseHeader: true,
-          request: true,
-          requestBody: true),
-    );
+
     try {
       final response = await dio.get(
         'http://${AppConfig.localHost}/${AppConfig.nearHelpUrl}/$roomId/identification',

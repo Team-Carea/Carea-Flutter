@@ -14,19 +14,19 @@ class ChatRoomTile extends StatefulWidget {
 
 class _ChatRoomTileState extends State<ChatRoomTile> {
   late String latestMessage;
+  late Opponent opponent;
   late DateTime updatedAt;
 
   @override
   void initState() {
     super.initState();
     latestMessage = widget.chatRoomInfo.latestMessage;
+    opponent = widget.chatRoomInfo.opponent;
     updatedAt = widget.chatRoomInfo.updatedAt;
   }
 
   @override
   Widget build(BuildContext context) {
-    // String latestMessage = widget.chatRoomInfo.latestMessage;
-
     return Column(
       children: [
         ListTile(
@@ -35,8 +35,11 @@ class _ChatRoomTileState extends State<ChatRoomTile> {
             final updatedLatestMessage = await Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      ChatRoomScreen(id: widget.chatRoomInfo.id)),
+                builder: (context) => ChatRoomScreen(
+                  id: widget.chatRoomInfo.id,
+                  opponent: opponent,
+                ),
+              ),
             );
             // latestMessage가 변경되었을 경우 반영
             if (updatedLatestMessage != null) {
