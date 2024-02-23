@@ -1,7 +1,6 @@
 import 'package:carea/app/common/component/category.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import "package:carea/app/common/layout/default_layout.dart";
-import 'package:carea/app/modules/community/controller/community_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

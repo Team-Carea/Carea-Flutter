@@ -15,9 +15,8 @@ class HelpConfirmService {
     channel = IOWebSocketChannel.connect(
         'ws://${AppConfig.localHost}/${AppConfig.nearHelpSttUrl}/$roomId?token=$accessToken');
 
-    isInitialized = true; // 웹소켓 연결 초기화 완료
+    isInitialized = true;
     channel.stream.listen((event) {
-      // 웹소켓을 통해 서버로부터의 이벤트 수신 대기
       noticeResponse(event);
     });
   }
