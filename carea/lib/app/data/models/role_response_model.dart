@@ -13,7 +13,7 @@ class RoleResponse {
     return RoleResponse(
       isSuccess: json['isSuccess'],
       message: json['message'],
-      result: json['result'], // 성공 시 "seeker" 또는 "helper", 실패 시 null
+      result: json['result'],
     );
   }
 }

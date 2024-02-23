@@ -23,7 +23,7 @@ class _App extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'NotoSans',
       ),
-      home: const ChatRoomListScreen(),
+      home: const LoginScreen(),
     );
   }
 }

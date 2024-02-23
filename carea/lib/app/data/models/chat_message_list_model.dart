@@ -22,13 +22,13 @@ class ChatMessageList {
 class ChatMessage {
   final int? id;
   final String message;
-  final DateTime createdAt;
+  final DateTime? createdAt;
   final int? user;
 
   ChatMessage({
     this.id,
     required this.message,
-    required this.createdAt,
+    this.createdAt,
     this.user,
   });
 
@@ -36,8 +36,17 @@ class ChatMessage {
     return ChatMessage(
       id: json['id'],
       message: json['message'],
-      createdAt: DateTime.parse(json['created_at']),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : DateTime.now(),
       user: json['user'],
+    );
+  }
+
+  factory ChatMessage.fromWebSocketJson(Map<String, dynamic> json) {
+    return ChatMessage(
+      message: json['message'],
+      user: json['user_id'],
     );
   }
 }

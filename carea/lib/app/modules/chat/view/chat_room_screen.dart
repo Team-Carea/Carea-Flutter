@@ -7,7 +7,6 @@ import 'package:carea/app/data/models/chat_room_list_model.dart';
 import 'package:carea/app/data/services/chat_room_service.dart';
 import 'package:carea/app/data/services/chat_service.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   final int id;
@@ -37,7 +36,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   @override
   void initState() {
     super.initState();
-    chatService = ChatService(roomId: widget.id.toString());
+    chatService = ChatService(
+      roomId: widget.id.toString(),
+      opponentUserId: widget.opponent.id,
+    );
     chatService.initializeWebsocket();
     chatService.onMessageCallback = (ChatMessage message) {
       setState(() {
@@ -196,7 +198,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         );
         // 화면에 메시지 추가 및 전송
         messages.add(newMessage);
-        chatService.addMessage(newMessage);
+        chatService.sendMessage(newMessage);
       });
       _controller.clear();
     }
