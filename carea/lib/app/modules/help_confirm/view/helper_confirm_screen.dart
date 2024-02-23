@@ -30,7 +30,7 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
     helpConfirmService.initializeWebsocket(widget.roomId);
 
     // onResponse 콜백 설정
-    helpConfirmService.onResponse = () {
+    helpConfirmService.onMyResponse = () {
       careaToast(toastMsg: '전송이 완료되었습니다.');
     };
   }
@@ -55,7 +55,7 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: getScreenHeight(context) * 0.03),
+            SizedBox(height: getScreenHeight(context) * 0.05),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
