@@ -58,8 +58,7 @@ Future<void> sendData(String title, String content, String address) async {
       careaToast(toastMsg: '도움이 성공적으로 등록되었습니다.');
     }
   } catch (e) {
-    print('Failed to send data: $e');
-    careaToast(toastMsg: '오류가 발생했습니다');
+    throw ('Failed to send data: $e');
   }
 }
 
@@ -137,7 +136,6 @@ Future<Map<String, dynamic>> getHelpDataDetail(int id) async {
 }
 
 // 회원 정보 조회하기
-
 Future<Map<String, dynamic>> getUserDetail() async {
   var url = 'http://10.0.2.2:8000/users/user';
   try {
