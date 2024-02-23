@@ -47,6 +47,7 @@ class ChatMessage {
     return ChatMessage(
       message: json['message'],
       user: json['user_id'],
+      createdAt: DateTime.now(),
     );
   }
 }
