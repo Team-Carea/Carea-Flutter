@@ -18,7 +18,7 @@ class ChatService {
   late WebSocketChannel channel;
   bool isInitialized = false; // 웹소켓 연결 초기화 상태를 추적하는 변수
   final String roomId = '1'; // 임시 채팅방 Id
-  Function(ChatMessage)? onMessageCallback;
+  Function? onMessageCallback;
 
   // 웹소켓 연결 초기화
   void initializeWebsocket() async {
@@ -44,13 +44,14 @@ class ChatService {
   }
 
   // 메시지 수신 처리
-  void onMessageReceived(response, Function(ChatMessage)? callback) {
+  void onMessageReceived(response, Function? callback) {
     // 내가 보낸 메시지에 대한 서버측의 응답일 경우
     if (response[0] == '{') {
       print(response);
     }
     // 다른 사람으로부터 받은 메시지일 경우
-    // TODO: 현재 메시지x, 받은 메시지임을 나타낼 것
+    // TODO: ui코드의 messages리스트에 '상대방'의 메시지임을 나타내는 형태로 추가하고, setState하기
+
     else {
       // 상대방으로부터 전송받은 내용으로 채팅방의 마지막 메시지를 변경하기 위한 부분
       if (callback != null) {

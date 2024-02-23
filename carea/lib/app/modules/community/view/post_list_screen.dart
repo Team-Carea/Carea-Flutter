@@ -3,7 +3,6 @@ import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/modules/community/view/create_post_screen.dart';
 import 'package:carea/app/modules/community/view/post_detail_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:carea/app/common/component/category.dart';
 
 class Post {
   final String title;

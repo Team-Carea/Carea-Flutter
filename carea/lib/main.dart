@@ -1,10 +1,12 @@
 import 'package:carea/app/common/layout/default_layout.dart';
+import 'package:carea/app/modules/chat/view/chat_room_list_screen.dart';
 import 'package:carea/app/modules/help_confirm/view/helper_confirm_screen.dart';
+import 'package:carea/app/modules/user/view/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // 1번코드
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   runApp(
     const _App(),
@@ -21,11 +23,7 @@ class _App extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'NotoSans',
       ),
-      home: const DefaultLayout(
-        child: HelperConfirmScreen(
-          roomId: '1',
-        ),
-      ),
+      home: const ChatRoomListScreen(),
     );
   }
 }

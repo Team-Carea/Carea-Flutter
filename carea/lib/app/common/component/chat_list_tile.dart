@@ -38,8 +38,6 @@ class _ChatRoomTileState extends State<ChatRoomTile> {
                   builder: (context) =>
                       ChatRoomScreen(id: widget.chatRoomInfo.id)),
             );
-
-            print(updatedLatestMessage);
             // latestMessage가 변경되었을 경우 반영
             if (updatedLatestMessage != null) {
               setState(() {
