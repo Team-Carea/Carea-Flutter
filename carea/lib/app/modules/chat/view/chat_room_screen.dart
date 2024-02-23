@@ -1,19 +1,23 @@
+import 'package:carea/app/common/component/custom_button.dart';
 import 'package:carea/app/common/const/app_colors.dart';
-import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
-import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:carea/app/data/models/chat_message_list_model.dart';
+import 'package:carea/app/data/models/chat_room_list_model.dart';
 import 'package:carea/app/data/services/chat_room_service.dart';
 import 'package:carea/app/data/services/chat_service.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   final int id;
+  final Opponent opponent;
 
-  const ChatRoomScreen({super.key, required this.id});
+  const ChatRoomScreen({
+    super.key,
+    required this.id,
+    required this.opponent,
+  });
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();
@@ -26,23 +30,22 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   final ScrollController _scrollController = ScrollController();
   // 채팅목록 상태관리를 위한 변수
   List<ChatMessage> messages = [];
-  int currentUserId = 2; // 나(자준청)의 id
-  late String currentUserType;
+  int? currentOpponentUserId;
+  String? currentUserType;
+  bool isCurrentUserTypeInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    // 웹소켓 초기화
     chatService.initializeWebsocket();
     chatService.onMessageCallback = (ChatMessage message) {
       setState(() {
         messages.add(message);
       });
     };
-    // 채팅 메시지 로드
     loadChatMessages(widget.id.toString());
-    // 도움요청/제공자 판별
     setCurrentUserType(widget.id.toString());
+    currentOpponentUserId = widget.opponent.id;
   }
 
   Future<void> loadChatMessages(String roomId) async {
@@ -58,55 +61,39 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   }
 
   Future<void> setCurrentUserType(String roomId) async {
-    currentUserType = await chatRoomService.getUserType(roomId);
-    print(currentUserType);
+    String userType = await chatRoomService.getUserType(roomId);
+    setState(() {
+      currentUserType = userType;
+      isCurrentUserTypeInitialized = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    String titleName = chatService.user2.firstName!;
-
+    String roomId = widget.id.toString();
     return DefaultLayout(
       appbar: AppBar(
         centerTitle: true,
-        title: Text(titleName),
+        title: Text(widget.opponent.nickname),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
             chatService.dispose();
-            // 가장 최신 메시지 return
+            // 가장 최신 메시지 정보 return
             ChatMessage updatedLatestMessage = messages[messages.length - 1];
             return Navigator.of(context).pop(updatedLatestMessage);
           },
         ),
         actions: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width * 0.05),
-            // TODO: Helper Seeker에 따라 서로 다른 도움 인증화면 라우팅
-            child: ElevatedButton(
-              onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => const ConfirmHelpScreen(),
-                //   ),
-                // );
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: AppColors.black,
-                backgroundColor: AppColors.yellowPrimaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: EdgeInsets.zero,
-              ).copyWith(
-                padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(horizontal: 8)),
+          if (isCurrentUserTypeInitialized)
+            Padding(
+              padding: EdgeInsets.only(
+                  right: MediaQuery.of(context).size.width * 0.05),
+              child: helpComfirmButton(
+                currentUserType: currentUserType!,
+                roomId: roomId,
               ),
-              child: const Text('도움 인증'),
             ),
-          ),
         ],
       ),
       bottomsheet: _buildBottomChatInput(),
@@ -116,8 +103,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         itemCount: messages.length,
         itemBuilder: (context, index) {
           var message = messages[messages.length - 1 - index];
-          bool isSentByCurrentUser = message.user == currentUserId;
-
+          bool isSentByCurrentUser = message.user == currentOpponentUserId;
           return _buildChatMessage(isSentByCurrentUser, context, message);
         },
       ),
@@ -204,10 +190,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     if (_controller.text.isNotEmpty) {
       setState(() {
         final newMessage = ChatMessage(
-            id: const Uuid().hashCode,
-            message: _controller.text,
-            createdAt: DateTime.now(),
-            user: currentUserId);
+          id: const Uuid().hashCode,
+          message: _controller.text,
+          createdAt: DateTime.now(),
+          user: currentOpponentUserId!,
+        );
         messages.add(newMessage);
         chatService.addMessage(newMessage);
       });
