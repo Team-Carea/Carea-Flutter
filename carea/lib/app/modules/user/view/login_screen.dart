@@ -6,6 +6,7 @@ import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/common/layout/root_tab.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
+import 'package:carea/app/data/services/user_service.dart';
 import 'package:carea/app/modules/user/view/join_screen.dart';
 
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dio = Dio();
+    UserService userService = UserService();
 
     return DefaultLayout(
       child: SingleChildScrollView(
@@ -67,22 +68,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomElevatedButton(
                   text: '로그인',
                   screenRoute: () async {
-                    // 테스트 유저 '자준청' 정보: {"email": "careleaver@gmail.com", "password": "carealeaver123"}
-                    final response = await dio.post(
-                      'http://${AppConfig.localHost}/users/login/',
-                      data: {"email": email, "password": password},
-                    );
-
-                    final accessToken = response.data['access'];
-                    final refreshToken = response.data['refresh'];
-
-                    AuthStorage.saveAccessToken(accessToken);
-                    AuthStorage.saveRefreshToken(refreshToken);
-
+                    final isLoggedIn = await userService.logIn(email, password);
                     // 정상 로그인 -> RootTab 이동
-                    if (!mounted) return;
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const RootTab()));
+                    if (isLoggedIn) {
+                      if (!mounted) return;
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const RootTab()));
+                    }
                   },
                 ),
                 SizedBox(height: getScreenWidth(context) * 0.01),
