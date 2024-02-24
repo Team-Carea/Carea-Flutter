@@ -2,6 +2,7 @@ import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:carea/app/data/models/user_model.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 class UserService {
   final Dio dio = Dio();
@@ -22,6 +23,31 @@ class UserService {
     } catch (e) {
       throw Exception('Failed to signup: $e');
     }
+  }
+
+  // POST: 로그인
+  Future<bool> logIn(String email, String password) async {
+    try {
+      // 테스트 유저 '자준청' 정보: {"email": "careleaver@gmail.com", "password": "carealeaver123"}
+      final response = await dio.post(
+        'http://${AppConfig.localHost}/users/login/',
+        data: {"email": email, "password": password},
+      );
+
+      final accessToken = response.data['access'];
+      final refreshToken = response.data['refresh'];
+
+      AuthStorage.saveAccessToken(accessToken);
+      AuthStorage.saveRefreshToken(refreshToken);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      } else {
+        print('Failed to login: ${response.data}');
+      }
+    } catch (e) {
+      throw Exception('Failed to login: $e');
+    }
+    return false;
   }
 
   // POST: 로그아웃
