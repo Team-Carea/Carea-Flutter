@@ -6,6 +6,8 @@ import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:carea/app/data/services/help_confirm_service.dart';
+import 'package:carea/app/data/services/sample.dart';
+import 'package:carea/app/data/services/stt_service.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +22,10 @@ class SeekerConfirmScreen extends StatefulWidget {
 class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
   late HelpConfirmService helpConfirmService;
   String receivedSentence = '아직 문장이 도착하지 않았어요.';
-  bool isRecording = false; // 부모 위젯에서 녹음 상태 관리
+  final SttService _sttService = SttService();
+  String recognizedSentence = '아직 녹음한 문장이 없어요.';
+  bool isRecognizing = false;
+  bool isRecognizeFinished = false;
 
   @override
   void initState() {
@@ -34,12 +39,29 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
         receivedSentence = sentence;
       });
     };
-  }
 
-  void handleRecordingStateChanged() {
-    setState(() {
-      isRecording = !isRecording;
-    });
+    // STT 기능
+    _sttService.onRecognizingStarted = () {
+      setState(() {
+        isRecognizing = true;
+      });
+    };
+    _sttService.onResultReceived = (resultText, recognizeFinished) {
+      setState(() {
+        recognizedSentence = resultText;
+        // 테스트용 STT 결과 문장 출력
+        print(recognizedSentence);
+        // 음성 종료 후
+        if (recognizeFinished) {
+          isRecognizeFinished = true;
+        }
+      });
+    };
+    _sttService.onRecognizingStopped = () {
+      setState(() {
+        isRecognizing = false;
+      });
+    };
   }
 
   @override
@@ -79,8 +101,8 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
               style: screenContentTitleTextStyle,
             ),
             const SizedBox(height: 12),
-            const SentenceCard(
-              text: '아직 녹음한 문장이 없어요.',
+            SentenceCard(
+              text: recognizedSentence,
               bgcolor: AppColors.faintGray,
               textStyle: sentenceTextStyle,
             ),
@@ -88,11 +110,8 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
             recordingIndicator(),
             Center(
               child: VoiceRecordButton(
-                onPressed: () {
-                  // TODO: 녹음 전/중/후 상태에 따른 UI 구현
-                },
-                onRecordingStateChanged:
-                    handleRecordingStateChanged, // 상태 변경 콜백 전달
+                onPressed: toggleRecording,
+                isRecognizing: isRecognizing,
               ),
             ),
           ],
@@ -101,8 +120,29 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
     );
   }
 
+  Future<void> toggleRecording() async {
+    print(isRecognizing);
+
+    if (isRecognizing) {
+      // 녹음 중지
+      _sttService.stopRecording();
+      setState(() {
+        recognizedSentence = '인증 확인 중이에요..👀';
+        isRecognizeFinished = true;
+        // TODO: 결과 비교 후 Dialog 띄우는 로직 추가
+      });
+    } else {
+      setState(() {
+        recognizedSentence = '녹음 중이에요...';
+        isRecognizing = true;
+      });
+      // 녹음 시작
+      _sttService.streamingRecognize();
+    }
+  }
+
   Widget recordingIndicator() {
-    return isRecording
+    return isRecognizing
         ? Lottie.asset(
             'asset/lottie/recording.json',
             width: 100,

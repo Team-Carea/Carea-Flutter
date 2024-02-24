@@ -84,10 +84,10 @@ flutter:
   uses-material-design: true
 
   assets:
-    - asset/
     - asset/img/
     - asset/svg/
     - asset/lottie/
+    - asset/google_api_service_account.json
     - .env
   # To add assets to your application, add an assets section, like this:
   # assets:
