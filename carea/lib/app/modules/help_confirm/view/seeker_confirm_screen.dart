@@ -45,20 +45,16 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
         isRecognizing = true;
       });
     };
-    _sttService.onResultReceived = (resultText, recognizeFinished) {
+    _sttService.onResultReceived = (resultText) {
       setState(() {
         recognizedSentence = resultText;
-        // 테스트용 STT 결과 문장 출력
-        print(recognizedSentence);
-        // 음성 종료 후
-        if (recognizeFinished) {
-          isRecognizeFinished = true;
-        }
+        isRecognizeFinished = true;
       });
     };
     _sttService.onRecognizingStopped = () {
       setState(() {
         isRecognizing = false;
+        isRecognizeFinished = true;
       });
     };
   }
@@ -85,7 +81,7 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(height: getScreenHeight(context) * 0.05),
+                SizedBox(height: getScreenHeight(context) * 0.02),
                 const Text(
                   '인증 문장',
                   style: screenContentTitleTextStyle,
@@ -107,6 +103,12 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
                   bgcolor: AppColors.faintGray,
                   textStyle: sentenceTextStyle,
                 ),
+                SizedBox(height: getScreenHeight(context) * 0.02),
+                CustomElevatedButton(
+                  text: '인증하기',
+                  screenRoute: confirmHelp,
+                  icon: Icons.check_circle,
+                )
               ],
             ),
           ),
@@ -134,24 +136,24 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
     );
   }
 
-  Future<void> toggleRecording() async {
-    print(isRecognizing);
+  void confirmHelp() {
+    setState(() {
+      recognizedSentence = '인증 확인 중이에요..👀';
+      // TODO: 결과 비교 후 Dialog 띄우는 로직 추가
+    });
+  }
 
+  Future<void> toggleRecording() async {
     if (isRecognizing) {
       // 녹음 중지
       _sttService.stopRecording();
-      setState(() {
-        recognizedSentence = '인증 확인 중이에요..👀';
-        isRecognizeFinished = true;
-        // TODO: 결과 비교 후 Dialog 띄우는 로직 추가
-      });
     } else {
+      // 녹음 시작
+      _sttService.streamingRecognize();
       setState(() {
         recognizedSentence = '녹음 중이에요...';
         isRecognizing = true;
       });
-      // 녹음 시작
-      _sttService.streamingRecognize();
     }
   }
 
