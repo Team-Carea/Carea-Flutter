@@ -4,6 +4,7 @@ import 'package:carea/app/common/component/toast_popup.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
+import 'package:carea/app/common/util/data_utils.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:carea/app/data/models/gemini_data_model.dart';
 import 'package:carea/app/data/services/gemini_service.dart';
@@ -113,15 +114,7 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
     try {
       GeminiResponseModel responseModel = await generateRandomSentence();
       String text = responseModel.text;
-      if (text.length > 20) {
-        List<String> splitText = [];
-        for (int i = 0; i < text.length; i += 20) {
-          int end = (i + 20 < text.length) ? i + 20 : text.length;
-          splitText.add(text.substring(i, end));
-        }
-        // 분할된 문자열을 줄바꿈 문자로 연결
-        text = splitText.join('\n');
-      }
+      text = DataUtils.getFormattedText(text);
       setState(() {
         sentence = text;
         isLoading = false;
