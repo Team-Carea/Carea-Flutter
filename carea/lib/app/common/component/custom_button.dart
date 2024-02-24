@@ -116,12 +116,12 @@ class helpComfirmButton extends StatelessWidget {
 
 class VoiceRecordButton extends StatefulWidget {
   final VoidCallback onPressed;
-  final Function onRecordingStateChanged; // 녹음 상태 변경 콜백 추가
+  final bool isRecognizing;
 
   const VoiceRecordButton({
     super.key,
     required this.onPressed,
-    required this.onRecordingStateChanged,
+    required this.isRecognizing,
   });
 
   @override
@@ -144,9 +144,6 @@ class _VoiceRecordButtonState extends State<VoiceRecordButton> {
             Icon(isRecording ? Icons.mic : Icons.mic_none, color: Colors.white),
         iconSize: 50,
         onPressed: () {
-          setState(() {
-            widget.onRecordingStateChanged(); // 상태 변경을 부모 위젯에 알림
-          });
           widget.onPressed(); // 부모 위젯에서 전달받은 onPressed 콜백 실행
         },
       ),

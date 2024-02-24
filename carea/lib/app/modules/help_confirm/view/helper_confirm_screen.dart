@@ -107,7 +107,7 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
   Future<void> updateSentence() async {
     setState(() {
       isLoading = true;
-      sentence = '생성 중...';
+      sentence = '생성 중이에요...';
     });
 
     try {
