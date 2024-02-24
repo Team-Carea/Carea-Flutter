@@ -4,7 +4,8 @@ import 'package:carea/app/common/util/data_utils.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:flutter/material.dart';
 
-void showSuccessConfirmDialog(BuildContext context) {
+void showSuccessConfirmDialog(
+    BuildContext context, int userPoints, int increasedPoints) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -27,10 +28,11 @@ void showSuccessConfirmDialog(BuildContext context) {
               const SizedBox(height: 18),
               const Text('도움 인증 경험치',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
-              const Text('+10xp ✨',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400)),
+              Text('+${increasedPoints}xp ✨',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w400)),
               const SizedBox(height: 18),
-              const ExpBar(exp: 0.5),
+              ExpBar(exp: userPoints * 0.01),
               Expanded(
                 child: Align(
                   alignment: Alignment.bottomRight,

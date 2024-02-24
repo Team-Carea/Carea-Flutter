@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:carea/app/data/models/gemini_data_model.dart';
+import 'package:carea/app/data/models/user_model.dart';
+import 'package:dio/dio.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class HelpConfirmService {
+class HelpConfirmWebSocketService {
   late WebSocketChannel channel;
   bool isInitialized = false;
   Function? onMyResponse;
@@ -68,6 +70,38 @@ class HelpConfirmService {
   void dispose() {
     if (isInitialized) {
       channel.sink.close();
+    }
+  }
+}
+
+class HelpConfirmDioService {
+  final Dio dio = Dio();
+
+  // PATCH: 경험치 증가
+  Future<PointInfo> getPoints(String roomId) async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final url =
+        'http://${AppConfig.localHost}/${AppConfig.nearHelpUrl}/$roomId/points';
+    try {
+      final response = await dio.patch(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        PointInfoResponse pointInfoResponse =
+            PointInfoResponse.fromJson(response.data);
+        return pointInfoResponse.result!;
+      } else {
+        throw Exception('Failed to patch points');
+      }
+    } on DioException catch (e) {
+      print(e.toString());
+      throw Exception('Failed to  patch points');
     }
   }
 }

@@ -97,3 +97,40 @@ class UserProfile {
     };
   }
 }
+
+class PointInfoResponse {
+  bool isSuccess;
+  String message;
+  PointInfo? result;
+
+  PointInfoResponse({
+    required this.isSuccess,
+    required this.message,
+    this.result,
+  });
+
+  factory PointInfoResponse.fromJson(Map<String, dynamic> json) {
+    return PointInfoResponse(
+      isSuccess: json['isSuccess'],
+      message: json['message'],
+      result: json['isSuccess'] ? PointInfo.fromJson(json['result']) : null,
+    );
+  }
+}
+
+class PointInfo {
+  int increasedPoints;
+  int userPoints;
+
+  PointInfo({
+    required this.increasedPoints,
+    required this.userPoints,
+  });
+
+  factory PointInfo.fromJson(Map<String, dynamic> json) {
+    return PointInfo(
+      increasedPoints: json['increased_points'],
+      userPoints: json['user_points'],
+    );
+  }
+}
