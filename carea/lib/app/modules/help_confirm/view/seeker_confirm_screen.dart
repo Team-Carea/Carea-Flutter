@@ -118,7 +118,7 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
                 SizedBox(height: getScreenHeight(context) * 0.02),
                 CustomElevatedButton(
                   text: '인증하기',
-                  screenRoute: confirmHelp,
+                  screenRoute: isConfirmed ? null : confirmHelp,
                   icon: Icons.check_circle,
                 )
               ],
