@@ -19,7 +19,13 @@ class HelpConfirmService {
 
     isInitialized = true;
     channel.stream.listen((event) {
-      noticeResponse(event);
+      final response = jsonDecode(event);
+      print(response);
+      // TODO: 응답값에 따라 다른 함수 실행하도록 코드 변경.
+      // 인증문장 송수신 관련 기능
+      noticeSentenceResponse(response);
+      // 인증완료 메시지 송수신 관련 기능
+      noticeConfirmResponse(response);
     });
   }
 
@@ -35,8 +41,18 @@ class HelpConfirmService {
     }
   }
 
-  void noticeResponse(event) {
-    final response = jsonDecode(event);
+  // 인증완료 메시지 전송을 위한 함수
+  void sendConfirmation(String sentence) {
+    if (isInitialized) {
+      final sentencePayload = jsonEncode({
+        'type': 'text',
+        'message': sentence,
+      });
+      channel.sink.add(sentencePayload);
+    }
+  }
+
+  void noticeSentenceResponse(response) {
     if (onMyResponse != null) {
       onMyResponse!();
     }
@@ -45,6 +61,9 @@ class HelpConfirmService {
       onOtherResponse!(receivedSentence.text);
     }
   }
+
+  // 인증완료 메시지 송수신
+  void noticeConfirmResponse(response) {}
 
   void dispose() {
     if (isInitialized) {

@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:carea/app/common/util/data_utils.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:permission_handler/permission_handler.dart';

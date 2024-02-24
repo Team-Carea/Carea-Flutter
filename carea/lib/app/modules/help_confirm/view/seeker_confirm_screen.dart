@@ -23,7 +23,7 @@ class SeekerConfirmScreen extends StatefulWidget {
 class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
   late HelpConfirmService helpConfirmService;
   // 비교를 위한 임시 더미데이터 TODO: 더미데이터 삭제
-  String receivedSentence = "여러분의 지원과 격려에 깊이 감사드리며, 앞으로도 변함없는 관심 부탁드립니다.";
+  String receivedSentence = "감사하옵니다.";
   final SttService _sttService = SttService();
   String recognizedSentence = '아직 녹음한 문장이 없어요.';
   String? confirmSentence;
@@ -31,7 +31,7 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
   Color receivedSentenceCardColor = AppColors.faintGray;
   bool isRecognizing = false;
   bool isRecognizeFinished = false;
-  bool isSame = false;
+  bool isConfirmed = false;
 
   @override
   void initState() {
@@ -153,11 +153,14 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
       recognizedSentenceCardColor = AppColors.faintGray;
       recognizedSentence = '인증 여부 확인 중이에요..👀';
     });
-    await Future.delayed(const Duration(seconds: 2));
 
-    isSame = DataUtils.compareTwoKoreanSentences(
-        receivedSentence, recognizedSentence);
-    if (!isSame) {
+    isConfirmed = DataUtils.compareTwoKoreanSentences(
+      receivedSentence,
+      confirmSentence!.replaceAll(RegExp(r'\s'), ''),
+    );
+    if (!isConfirmed) {
+      await Future.delayed(const Duration(seconds: 2));
+      // 인증 실패
       setState(() {
         recognizedSentence = confirmSentence!;
         recognizedSentenceCardColor = AppColors.yellowPrimaryColor;
@@ -165,9 +168,14 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
       if (!mounted) return;
       showFailureConfirmDialog(context, receivedSentence, recognizedSentence);
     } else {
-      // 일치하는 경우
-      // 문장카드 색깔, 문장카드 내용변경
-      // 도움제공자 웹소켓 메시지 전송하기
+      // 인증 성공
+      setState(() {
+        recognizedSentence = confirmSentence!;
+        recognizedSentenceCardColor = AppColors.lightBlueGray;
+      });
+
+      // 도움제공자에게 인증완료 메시지 전송
+      helpConfirmService.sendConfirmation('isConfirmed');
       // 경험치 증가 api 호출 이후 -> 문장팝업 띄우기
     }
   }
