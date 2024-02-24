@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:carea/app/common/util/data_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
@@ -39,8 +40,10 @@ class SttService {
     // isRecognizing 상태값 true로 변경
     onRecognizingStarted!();
 
+    // 마이크 권한 요청
     await Permission.microphone.request();
 
+    // 녹음 시작
     await _recorder.startRecorder(
         toStream: _recordingDataController!.sink,
         codec: Codec.pcm16,
@@ -61,19 +64,12 @@ class SttService {
 
     responseStream.listen((data) {
       final currentText =
-          data.results.map((e) => e.alternatives.first.transcript).join('\n');
+          data.results.map((e) => e.alternatives.first.transcript).join(' ');
 
-      if (data.results.first.isFinal) {
-        responseText += '\n$currentText';
-        isRecognizeFinished = true;
+      responseText = DataUtils.getFormattedText(currentText);
+      isRecognizeFinished = true;
 
-        onResultReceived?.call(responseText, isRecognizeFinished);
-      } else {
-        responseText = '$responseText\n$currentText';
-        isRecognizeFinished = true;
-
-        onResultReceived?.call(responseText, isRecognizeFinished);
-      }
+      onResultReceived?.call(responseText, isRecognizeFinished);
     }, onDone: () {
       onRecognizingStopped!();
     });

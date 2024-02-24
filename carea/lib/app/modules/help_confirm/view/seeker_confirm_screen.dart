@@ -6,7 +6,6 @@ import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:carea/app/data/services/help_confirm_service.dart';
-import 'package:carea/app/data/services/sample.dart';
 import 'package:carea/app/data/services/stt_service.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
@@ -79,43 +78,52 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
         title: const Text('도움 인증'),
         centerTitle: true,
       ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: getScreenHeight(context) * 0.05),
-            const Text(
-              '인증 문장',
-              style: screenContentTitleTextStyle,
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: getScreenHeight(context) * 0.05),
+                const Text(
+                  '인증 문장',
+                  style: screenContentTitleTextStyle,
+                ),
+                const SizedBox(height: 12),
+                SentenceCard(
+                  text: receivedSentence,
+                  bgcolor: AppColors.faintGray,
+                  textStyle: sentenceTextStyle,
+                ),
+                SizedBox(height: getScreenHeight(context) * 0.05),
+                const Text(
+                  '인증 문장을 녹음해주세요 💬',
+                  style: screenContentTitleTextStyle,
+                ),
+                const SizedBox(height: 12),
+                SentenceCard(
+                  text: recognizedSentence,
+                  bgcolor: AppColors.faintGray,
+                  textStyle: sentenceTextStyle,
+                ),
+                SizedBox(height: getScreenHeight(context) * 0.10),
+                recordingIndicator(),
+              ],
             ),
-            const SizedBox(height: 12),
-            SentenceCard(
-              text: receivedSentence,
-              bgcolor: AppColors.faintGray,
-              textStyle: sentenceTextStyle,
-            ),
-            SizedBox(height: getScreenHeight(context) * 0.05),
-            const Text(
-              '인증 문장을 녹음해주세요 💬',
-              style: screenContentTitleTextStyle,
-            ),
-            const SizedBox(height: 12),
-            SentenceCard(
-              text: recognizedSentence,
-              bgcolor: AppColors.faintGray,
-              textStyle: sentenceTextStyle,
-            ),
-            SizedBox(height: getScreenHeight(context) * 0.10),
-            recordingIndicator(),
-            Center(
+          ),
+          Positioned(
+            bottom: getScreenHeight(context) * 0.10,
+            left: 0,
+            right: 0,
+            child: Center(
               child: VoiceRecordButton(
                 onPressed: toggleRecording,
                 isRecognizing: isRecognizing,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
