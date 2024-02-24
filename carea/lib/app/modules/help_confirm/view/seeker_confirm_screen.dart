@@ -107,9 +107,15 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
                   bgcolor: AppColors.faintGray,
                   textStyle: sentenceTextStyle,
                 ),
-                SizedBox(height: getScreenHeight(context) * 0.10),
-                recordingIndicator(),
               ],
+            ),
+          ),
+          Positioned(
+            bottom: getScreenHeight(context) * 0.20,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: recordingIndicator(),
             ),
           ),
           Positioned(
