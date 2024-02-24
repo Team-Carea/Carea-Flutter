@@ -38,7 +38,29 @@ class DataUtils {
       return input.replaceAll(RegExp('[^가-힣0-9]'), '');
     }
 
-    return clean(s1) == clean(s2);
+    String cleanedS1 = clean(s1);
+    String cleanedS2 = clean(s2);
+
+    // 두 문장 중 짧은 쪽의 길이가 기준
+    int minLength = cleanedS1.length < cleanedS2.length
+        ? cleanedS1.length
+        : cleanedS2.length;
+    int matchingCharCount = 0;
+
+    // 두 문장의 글자를 순서대로 비교하여 일치하는 글자 수 세기
+    for (int i = 0; i < minLength; i++) {
+      if (cleanedS1[i] == cleanedS2[i]) {
+        matchingCharCount++;
+      }
+    }
+
+    // 전체 글자 중 일치하는 글자의 비율을 계산
+    double matchingRate = matchingCharCount / minLength;
+
+    print(matchingRate);
+
+    // 일치 비율이 80% 이상인지 판단함
+    return matchingRate >= 0.8;
   }
 
   static List<TextSpan> markDifferentWord(String s1, String s2) {
