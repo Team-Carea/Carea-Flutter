@@ -9,6 +9,7 @@ import 'package:carea/app/common/util/data_utils.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:carea/app/data/services/help_confirm_service.dart';
 import 'package:carea/app/data/services/stt_service.dart';
+
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,7 @@ class SeekerConfirmScreen extends StatefulWidget {
 }
 
 class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
-  late HelpConfirmService helpConfirmService;
+  late HelpConfirmWebSocketService helpConfirmWebSocketService;
   // 비교를 위한 임시 더미데이터 TODO: 더미데이터 삭제
   String receivedSentence = "감사하옵니다.";
   final SttService _sttService = SttService();
@@ -36,10 +37,10 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
   @override
   void initState() {
     super.initState();
-    helpConfirmService = HelpConfirmService();
-    helpConfirmService.initializeWebsocket(widget.roomId);
+    helpConfirmWebSocketService = HelpConfirmWebSocketService();
+    helpConfirmWebSocketService.initializeWebsocket(widget.roomId);
     // onResponse 콜백 설정
-    helpConfirmService.onOtherResponse = (String sentence) {
+    helpConfirmWebSocketService.onOtherResponse = (String sentence) {
       careaToast(toastMsg: '문장 수신이 완료되었습니다.');
       setState(() {
         receivedSentence = sentence;
@@ -76,7 +77,7 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            helpConfirmService.dispose();
+            helpConfirmWebSocketService.dispose();
             Navigator.pop(context);
           },
         ),
@@ -148,6 +149,8 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
   }
 
   void confirmHelp() async {
+    HelpConfirmDioService helpConfirmDioService = HelpConfirmDioService();
+
     setState(() {
       confirmSentence = recognizedSentence;
       recognizedSentenceCardColor = AppColors.faintGray;
@@ -169,14 +172,19 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
       showFailureConfirmDialog(context, receivedSentence, recognizedSentence);
     } else {
       // 인증 성공
+
+      // 도움제공자에게 인증완료 메시지 전송 TODO: API 수정 이후 다시 구현
+      // helpConfirmWebSocketService.sendConfirmation('isConfirmed');
+      // 경험치 증가 api 호출
+      final pointInfo = await helpConfirmDioService.getPoints(widget.roomId);
+
       setState(() {
         recognizedSentence = confirmSentence!;
         recognizedSentenceCardColor = AppColors.lightBlueGray;
       });
-
-      // 도움제공자에게 인증완료 메시지 전송
-      helpConfirmService.sendConfirmation('isConfirmed');
-      // 경험치 증가 api 호출 이후 -> 문장팝업 띄우기
+      if (!mounted) return;
+      showSuccessConfirmDialog(
+          context, pointInfo.userPoints, pointInfo.increasedPoints);
     }
   }
 

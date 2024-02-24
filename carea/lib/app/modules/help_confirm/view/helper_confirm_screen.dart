@@ -20,14 +20,14 @@ class HelperConfirmScreen extends StatefulWidget {
 }
 
 class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
-  late HelpConfirmService helpConfirmService;
+  late HelpConfirmWebSocketService helpConfirmService;
   String sentence = '아직 생성된 문장이 없습니다.';
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    helpConfirmService = HelpConfirmService();
+    helpConfirmService = HelpConfirmWebSocketService();
     helpConfirmService.initializeWebsocket(widget.roomId);
 
     // onResponse 콜백 설정
