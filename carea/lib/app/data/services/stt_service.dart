@@ -37,9 +37,6 @@ class SttService {
       }
     });
 
-    // isRecognizing 상태값 true로 변경
-    onRecognizingStarted!();
-
     // 마이크 권한 요청
     await Permission.microphone.request();
 
@@ -69,7 +66,7 @@ class SttService {
       responseText = DataUtils.getFormattedText(currentText);
       isRecognizeFinished = true;
 
-      onResultReceived?.call(responseText, isRecognizeFinished);
+      onResultReceived?.call(responseText);
     }, onDone: () {
       onRecognizingStopped!();
     });
