@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
-
-const accessToken =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
+import 'package:carea/app/common/util/auth_storage.dart';
 
 final Dio dio = Dio();
 
@@ -16,6 +15,7 @@ class Post {
   String? updated_at;
   Object user;
   String nickname;
+  String profileUrl;
 
   Post({
     required this.id,
@@ -26,6 +26,7 @@ class Post {
     this.updated_at,
     required this.user,
     required this.nickname,
+    required this.profileUrl,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
@@ -41,15 +42,15 @@ class Post {
     }
 
     return Post(
-      id: json['id'],
-      title: json['title'],
-      content: json['content'],
-      category: json['category'],
-      created_at: formattedCreatedAt,
-      updated_at: formattedUpdatedAt,
-      user: json['user'],
-      nickname: json['user']?['nickname'] ?? "undefined",
-    );
+        id: json['id'],
+        title: json['title'],
+        content: json['content'],
+        category: json['category'],
+        created_at: formattedCreatedAt,
+        updated_at: formattedUpdatedAt,
+        user: json['user'],
+        nickname: json['user']?['nickname'] ?? "undefined",
+        profileUrl: json['user']['profile_url']);
   }
 }
 
@@ -79,6 +80,8 @@ class Posts {
   }
 
   Future<void> _fetchPostsForCategory(String category) async {
+    final accessToken = await AuthStorage.getAccessToken();
+
     String baseUrl = 'http://10.0.2.2:8000/posts/$category/';
     try {
       final response = await dio.get(
@@ -106,6 +109,8 @@ class Posts {
 // 게시글 상세 조회
 
   Future<Post?> getPostDetail(int id) async {
+    final accessToken = await AuthStorage.getAccessToken();
+
     String baseUrl = 'http://10.0.2.2:8000/posts/$id/';
     try {
       final response = await dio.get(
@@ -134,6 +139,8 @@ class Posts {
 // 게시글 등록
 
 Future<void> createPost(String title, String content, String category) async {
+  final accessToken = await AuthStorage.getAccessToken();
+
   String baseUrl = 'http://10.0.2.2:8000/posts/$category/';
   try {
     final response = await dio.post(
@@ -147,7 +154,7 @@ Future<void> createPost(String title, String content, String category) async {
         'title': title,
         'content': content,
         'category': category,
-        'user': 1,
+        // 'user': 1,
       },
     );
     if (response.statusCode == 201) {

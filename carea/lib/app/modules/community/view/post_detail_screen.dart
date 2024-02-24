@@ -20,36 +20,24 @@ class PostDetail extends StatefulWidget {
 }
 
 class _PostDetailState extends State<PostDetail> {
-  late Post _post;
-  late final Posts _posts = Posts();
-  late final Comments _comments = Comments();
+  final Posts _posts = Posts();
+  final Comments _comments = Comments();
 
-  @override
-  void initState() {
-    super.initState();
-    _getPostDetail();
-    _getComments();
-  }
-
-  Future<void> _getPostDetail() async {
+  Future<Post?> _fetchPost() async {
     try {
       final post = await _posts.getPostDetail(widget.id);
-      if (post != null && mounted) {
-        setState(() {
-          _post = post;
-        });
-      } else {
-        print('Post not found or error occurred');
-      }
+      return post;
     } catch (error) {
-      print(error);
+      return null;
     }
   }
 
-  Future<void> _getComments() async {
-    await _comments.getCommentDetail(widget.id.toString());
-    if (mounted) {
-      setState(() {});
+  Future<List<Object>> _fetchComments() async {
+    try {
+      final comments = await _comments.fetchComments(widget.id.toString());
+      return comments;
+    } catch (error) {
+      return [];
     }
   }
 
@@ -75,221 +63,292 @@ class _PostDetailState extends State<PostDetail> {
           )
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: DefaultLayout(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        const SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                '/asset/svg/icon/defaultimage.svg'),
-                            radius: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _post.nickname,
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              _post.created_at,
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.normal),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        _post.title,
-                        style: const TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const Divider(),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        _post.content,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ),
-                    const Divider(),
-                    Row(
-                      children: [
-                        const Row(
-                          children: [
-                            Icon(
-                              CupertinoIcons.ellipses_bubble,
-                              color: Colors.green,
-                              size: 20,
-                            ),
-                            SizedBox(width: 10),
-                            Text('2'),
-                          ],
-                        ),
-                        const SizedBox(width: 20),
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(
-                                CupertinoIcons.heart,
-                                color: Colors.red,
-                                size: 20,
-                              ),
-                              onPressed: () {},
-                            ),
-                            const SizedBox(width: 4),
-                            const Text('4'),
-                          ],
-                        ),
-                        const SizedBox(width: 20),
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(
-                                CupertinoIcons.star,
-                                color: Colors.yellow,
-                                size: 20,
-                              ),
-                              onPressed: () {},
-                            ),
-                            const SizedBox(width: 4),
-                            const Text('5'),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      '댓글',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _comments.items.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final comment = _comments.items[index];
-                        return Container(
-                          margin: const EdgeInsets.symmetric(vertical: 8.0),
-                          padding: const EdgeInsets.all(12.0),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+      body: DefaultLayout(
+        child: FutureBuilder<Post?>(
+          future: _fetchPost(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return const Center(child: Text('Error loading post'));
+            } else if (snapshot.data == null) {
+              return const Center(child: Text('해당 포스트에 대한 정보가 없습니다다'));
+            } else {
+              final Post post = snapshot.data!;
+              return Column(
+                children: [
+                  Expanded(
+                    child: DefaultLayout(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              const CircleAvatar(
-                                radius: 20.0,
-                                backgroundColor: AppColors.bluePrimaryColor,
+                              const SizedBox(width: 30),
+                              SingleChildScrollView(
+                                child: SizedBox(
+                                  width: 80,
+                                  height: 80,
+                                  child: CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(post.profileUrl),
+                                    radius: 20,
+                                  ),
+                                ),
                               ),
-                              const SizedBox(width: 12.0),
+                              const SizedBox(width: 20),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    comment.nickname,
+                                    post.nickname,
                                     style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0,
-                                    ),
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                  const SizedBox(height: 4.0),
                                   Text(
-                                    comment.content,
-                                    style: const TextStyle(fontSize: 14.0),
-                                  ),
-                                  const SizedBox(height: 4.0),
-                                  Text(
-                                    comment.created_at,
+                                    post.created_at,
                                     style: const TextStyle(
-                                      fontSize: 12.0,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal),
+                                  )
                                 ],
                               ),
                             ],
                           ),
-                        );
-                      },
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              post.title,
+                              style: const TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const Divider(),
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              post.content,
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          ),
+                          const Divider(),
+                          const PostReactions(),
+                          const SizedBox(height: 10),
+                          FutureBuilder<List<Object>>(
+                            future: _fetchComments(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                return const Text('Error loading comments');
+                              } else {
+                                final List<Object> comments =
+                                    snapshot.data ?? [];
+                                return Comment(comments: comments);
+                              }
+                            },
+                          )
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
+                  const CommentMaker(),
+                ],
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class PostReactions extends StatelessWidget {
+  const PostReactions({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Row(
+          children: [
+            Icon(
+              CupertinoIcons.ellipses_bubble,
+              color: Colors.green,
+              size: 20,
+            ),
+            SizedBox(width: 10),
+            Text('2'),
+          ],
+        ),
+        const SizedBox(width: 20),
+        Row(
+          children: [
+            IconButton(
+              icon: const Icon(
+                CupertinoIcons.heart,
+                color: Colors.red,
+                size: 20,
+              ),
+              onPressed: () {},
+            ),
+            const SizedBox(width: 4),
+            const Text('4'),
+          ],
+        ),
+        const SizedBox(width: 20),
+        Row(
+          children: [
+            IconButton(
+              icon: const Icon(
+                CupertinoIcons.star,
+                color: Colors.yellow,
+                size: 20,
+              ),
+              onPressed: () {},
+            ),
+            const SizedBox(width: 4),
+            const Text('5'),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class Comment extends StatelessWidget {
+  const Comment({
+    super.key,
+    required this.comments,
+  });
+
+  final List<Object> comments;
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    return Column(
+      children: [
+        const Text(
+          '댓글',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: comments.length,
+          itemBuilder: (BuildContext context, int index) {
+            final comment = comments[index];
+            return Container(
+              margin: const EdgeInsets.symmetric(vertical: 8.0),
+              padding: const EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const CircleAvatar(
+                    radius: 20.0,
+                    backgroundColor: AppColors.bluePrimaryColor,
+                  ),
+                  const SizedBox(width: 12.0),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        comment.toString(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      const SizedBox(height: 4.0),
+                      Text(
+                        comment.toString(),
+                        style: const TextStyle(fontSize: 14.0),
+                      ),
+                      const SizedBox(height: 4.0),
+                      Text(
+                        comment.toString(),
+                        style: const TextStyle(
+                          fontSize: 12.0,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class CommentMaker extends StatelessWidget {
+  const CommentMaker({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(
+          color: Colors.grey,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 3.0, horizontal: 8.0),
+              child: TextFormField(
+                onChanged: (value) {
+                  // Handle change
+                },
+                decoration: const InputDecoration(
+                  hintText: '댓글을 입력해주세요',
+                  border: InputBorder.none,
                 ),
+                maxLines: 1,
               ),
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              border: Border.all(
-                color: Colors.grey,
+          Material(
+            type: MaterialType.transparency,
+            child: Ink(
+              width: 40,
+              decoration: const ShapeDecoration(
+                color: Colors.green,
+                shape: CircleBorder(),
+              ),
+              child: IconButton(
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
+                icon: const Icon(
+                  Icons.send,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  // Handle send
+                },
               ),
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 3.0, horizontal: 8.0),
-                    child: TextFormField(
-                      onChanged: (value) {
-                        // Handle change
-                      },
-                      decoration: const InputDecoration(
-                        hintText: '댓글을 입력해주세요',
-                        border: InputBorder.none,
-                      ),
-                      maxLines: 1,
-                    ),
-                  ),
-                ),
-                Material(
-                  type: MaterialType.transparency,
-                  child: Ink(
-                    width: 40,
-                    decoration: const ShapeDecoration(
-                      color: Colors.green,
-                      shape: CircleBorder(),
-                    ),
-                    child: IconButton(
-                      padding: const EdgeInsets.symmetric(vertical: 15.0),
-                      icon: const Icon(
-                        Icons.send,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        // Handle send
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-              ],
-            ),
           ),
+          const SizedBox(width: 8),
         ],
       ),
     );

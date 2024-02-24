@@ -1,5 +1,6 @@
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/modules/help_confirm/view/helper_confirm_screen.dart';
+import 'package:carea/app/modules/user/view/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -22,9 +23,7 @@ class _App extends StatelessWidget {
         fontFamily: 'NotoSans',
       ),
       home: const DefaultLayout(
-        child: HelperConfirmScreen(
-          roomId: '1',
-        ),
+        child: SplashScreen(),
       ),
     );
   }

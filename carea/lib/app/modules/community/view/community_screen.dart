@@ -57,17 +57,18 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 itemCount: categories.length,
                 itemBuilder: (BuildContext context, int index) {
                   return BoardButton(
-                      subtitle: subtitles[index],
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                PostListScreen(pageTitle: categories[index]),
-                          ),
-                        );
-                      },
-                      text: categories[index]);
+                    subtitle: subtitles[index],
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PostListScreen(pageTitle: categories[index]),
+                        ),
+                      );
+                    },
+                    text: categories[index],
+                  );
                 },
               ),
             )

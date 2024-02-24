@@ -1,13 +1,13 @@
 import 'package:carea/app/common/component/toast_popup.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:location/location.dart';
+import 'package:carea/app/common/util/auth_storage.dart';
 
 Dio dio = Dio();
-const gpsApiKey = 'gpsApiKey';
-const accessToken =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
+String googleApiKey = dotenv.get("GOOGLE_MAP_API_KEY");
 
 class LocationService {
   Location location = Location();
@@ -39,6 +39,8 @@ class LocationService {
 // 도움 등록하기
 
 Future<void> sendData(String title, String content, String address) async {
+  final accessToken = await AuthStorage.getAccessToken();
+
   var url = 'http://10.0.2.2:8000/helps/';
   try {
     var response = await dio.post(
@@ -65,6 +67,8 @@ Future<void> sendData(String title, String content, String address) async {
 // 도움 요청 표시하기
 
 Future<List<Map<String, dynamic>>> getHelpData() async {
+  final accessToken = await AuthStorage.getAccessToken();
+
   List<Map<String, dynamic>> places = [];
   const url = 'http://10.0.2.2:8000/helps/';
   try {
@@ -101,6 +105,8 @@ Future<List<Map<String, dynamic>>> getHelpData() async {
 // 상세 도움 표시하기
 
 Future<Map<String, dynamic>> getHelpDataDetail(int id) async {
+  final accessToken = await AuthStorage.getAccessToken();
+
   var url = 'http://10.0.2.2:8000/helps/$id';
   try {
     var response = await dio.get(
@@ -137,6 +143,8 @@ Future<Map<String, dynamic>> getHelpDataDetail(int id) async {
 
 // 회원 정보 조회하기
 Future<Map<String, dynamic>> getUserDetail() async {
+  final accessToken = await AuthStorage.getAccessToken();
+
   var url = 'http://10.0.2.2:8000/users/user';
   try {
     var response = await dio.get(

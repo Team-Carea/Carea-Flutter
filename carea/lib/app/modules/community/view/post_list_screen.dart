@@ -86,65 +86,66 @@ class _PostListScreenState extends State<PostListScreen> {
           itemBuilder: (BuildContext context, int index) {
             final post = _posts.items[index];
             return InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PostDetail(
-                              pageTitle: widget.pageTitle,
-                              id: post.id,
-                            )),
-                  );
-                },
-                child: Column(
-                  children: [
-                    ListTile(
-                      title: Text(
-                        post.title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PostDetail(
+                            pageTitle: widget.pageTitle,
+                            id: post.id,
+                          )),
+                );
+              },
+              child: Column(
+                children: [
+                  ListTile(
+                    title: Text(
+                      post.title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 10),
+                        Text(
+                          post.content,
+                          style: const TextStyle(fontSize: 16),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 10),
-                          Text(
-                            post.content,
-                            style: const TextStyle(fontSize: 16),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                post.created_at,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              post.created_at,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
                               ),
-                              Text(
-                                post.nickname,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
+                            ),
+                            Text(
+                              post.nickname,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    const Divider(
-                      color: Colors.grey,
-                      thickness: 1,
-                    ),
-                  ],
-                ));
+                  ),
+                  const Divider(
+                    color: Colors.grey,
+                    thickness: 1,
+                  ),
+                ],
+              ),
+            );
           },
         ),
       ),

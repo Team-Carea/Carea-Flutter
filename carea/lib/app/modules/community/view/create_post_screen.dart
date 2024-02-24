@@ -3,7 +3,6 @@ import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/modules/community/controller/community_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class CreatePostScreen extends StatefulWidget {
   final String pageTitle;
@@ -171,11 +170,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               width: 20,
                             ),
                             IconButton(
-                              onPressed: () async {
-                                var picker = ImagePicker();
-                                var image = await picker.pickImage(
-                                    source: ImageSource.gallery);
-                              },
+                              onPressed: () async {},
                               icon: const Icon(
                                 Icons.add_a_photo_outlined,
                                 color: AppColors.lightGray,

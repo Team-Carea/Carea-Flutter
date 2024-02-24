@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
@@ -57,9 +58,18 @@ class Comments {
   List<Comment> get items => _items;
 
   Future<void> getCommentDetail(String postId) async {
+    final accessToken = await AuthStorage.getAccessToken();
+
     String baseUrl = 'http://10.0.2.2:8000/posts/$postId/comments/';
     try {
-      final response = await dio.get(baseUrl);
+      final response = await dio.get(
+        baseUrl,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
       print(response);
       if (response.statusCode == 200) {
         Map<String, dynamic> extractedData = response.data;
@@ -80,9 +90,16 @@ class Comments {
 // 댓글 등록
 
 Future<void> postComment(int postId, String content, String nickname) async {
+  final accessToken = await AuthStorage.getAccessToken();
+
   try {
     final response = await dio.post(
       'http://10.0.2.2:8000/posts/$postId/comments/',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+        },
+      ),
       data: {
         'post_id': postId,
         'content': content,
