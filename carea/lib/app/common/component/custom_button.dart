@@ -129,8 +129,6 @@ class VoiceRecordButton extends StatefulWidget {
 }
 
 class _VoiceRecordButtonState extends State<VoiceRecordButton> {
-  bool isRecording = false;
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -140,8 +138,8 @@ class _VoiceRecordButtonState extends State<VoiceRecordButton> {
         shape: BoxShape.circle,
       ),
       child: IconButton(
-        icon:
-            Icon(isRecording ? Icons.mic : Icons.mic_none, color: Colors.white),
+        icon: Icon(widget.isRecognizing ? Icons.mic : Icons.mic_none,
+            color: Colors.white),
         iconSize: 50,
         onPressed: () {
           widget.onPressed(); // 부모 위젯에서 전달받은 onPressed 콜백 실행

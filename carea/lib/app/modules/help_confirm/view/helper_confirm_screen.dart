@@ -56,7 +56,7 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: getScreenHeight(context) * 0.05),
+            SizedBox(height: getScreenHeight(context) * 0.03),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
