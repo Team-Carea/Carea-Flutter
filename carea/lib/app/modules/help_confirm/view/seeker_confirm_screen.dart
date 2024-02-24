@@ -1,9 +1,11 @@
 import 'package:carea/app/common/component/custom_button.dart';
+import 'package:carea/app/common/component/notice_dialog.dart';
 import 'package:carea/app/common/component/sentence_card.dart';
 import 'package:carea/app/common/component/toast_popup.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
+import 'package:carea/app/common/util/data_utils.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:carea/app/data/services/help_confirm_service.dart';
 import 'package:carea/app/data/services/stt_service.dart';
@@ -20,11 +22,16 @@ class SeekerConfirmScreen extends StatefulWidget {
 
 class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
   late HelpConfirmService helpConfirmService;
-  String receivedSentence = '아직 문장이 도착하지 않았어요.';
+  // 비교를 위한 임시 더미데이터 TODO: 더미데이터 삭제
+  String receivedSentence = "여러분의 지원과 격려에 깊이 감사드리며, 앞으로도 변함없는 관심 부탁드립니다.";
   final SttService _sttService = SttService();
   String recognizedSentence = '아직 녹음한 문장이 없어요.';
+  String? confirmSentence;
+  Color recognizedSentenceCardColor = AppColors.faintGray;
+  Color receivedSentenceCardColor = AppColors.faintGray;
   bool isRecognizing = false;
   bool isRecognizeFinished = false;
+  bool isSame = false;
 
   @override
   void initState() {
@@ -42,6 +49,8 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
     // STT 기능
     _sttService.onRecognizingStarted = () {
       setState(() {
+        recognizedSentence = '녹음 중이에요...';
+        recognizedSentenceCardColor = AppColors.faintGray;
         isRecognizing = true;
       });
     };
@@ -87,9 +96,10 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
                   style: screenContentTitleTextStyle,
                 ),
                 const SizedBox(height: 12),
+                // 인증 문장용 카드
                 SentenceCard(
                   text: receivedSentence,
-                  bgcolor: AppColors.faintGray,
+                  bgcolor: receivedSentenceCardColor,
                   textStyle: sentenceTextStyle,
                 ),
                 SizedBox(height: getScreenHeight(context) * 0.05),
@@ -98,9 +108,10 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
                   style: screenContentTitleTextStyle,
                 ),
                 const SizedBox(height: 12),
+                // 녹음 문장용 카드
                 SentenceCard(
                   text: recognizedSentence,
-                  bgcolor: AppColors.faintGray,
+                  bgcolor: recognizedSentenceCardColor,
                   textStyle: sentenceTextStyle,
                 ),
                 SizedBox(height: getScreenHeight(context) * 0.02),
@@ -136,11 +147,29 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
     );
   }
 
-  void confirmHelp() {
+  void confirmHelp() async {
     setState(() {
-      recognizedSentence = '인증 확인 중이에요..👀';
-      // TODO: 결과 비교 후 Dialog 띄우는 로직 추가
+      confirmSentence = recognizedSentence;
+      recognizedSentenceCardColor = AppColors.faintGray;
+      recognizedSentence = '인증 여부 확인 중이에요..👀';
     });
+    await Future.delayed(const Duration(seconds: 2));
+
+    isSame = DataUtils.compareTwoKoreanSentences(
+        receivedSentence, recognizedSentence);
+    if (!isSame) {
+      setState(() {
+        recognizedSentence = confirmSentence!;
+        recognizedSentenceCardColor = AppColors.yellowPrimaryColor;
+      });
+      if (!mounted) return;
+      showFailureConfirmDialog(context, receivedSentence, recognizedSentence);
+    } else {
+      // 일치하는 경우
+      // 문장카드 색깔, 문장카드 내용변경
+      // 도움제공자 웹소켓 메시지 전송하기
+      // 경험치 증가 api 호출 이후 -> 문장팝업 띄우기
+    }
   }
 
   Future<void> toggleRecording() async {
@@ -150,10 +179,6 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
     } else {
       // 녹음 시작
       _sttService.streamingRecognize();
-      setState(() {
-        recognizedSentence = '녹음 중이에요...';
-        isRecognizing = true;
-      });
     }
   }
 

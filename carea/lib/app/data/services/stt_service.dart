@@ -37,6 +37,8 @@ class SttService {
       }
     });
 
+    onRecognizingStarted!();
+
     // 마이크 권한 요청
     await Permission.microphone.request();
 
@@ -77,7 +79,6 @@ class SttService {
     await _audioStreamSubscription?.cancel();
     await _audioStream?.close();
     await _recordingDataSubscription?.cancel();
-    onRecognizingStopped!();
   }
 
   RecognitionConfig _getConfig() => RecognitionConfig(
