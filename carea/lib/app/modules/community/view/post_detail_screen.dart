@@ -72,7 +72,7 @@ class _PostDetailState extends State<PostDetail> {
             } else if (snapshot.hasError) {
               return const Center(child: Text('Error loading post'));
             } else if (snapshot.data == null) {
-              return const Center(child: Text('해당 포스트에 대한 정보가 없습니다다'));
+              return const Center(child: Text('해당 포스트에 대한 정보가 없습니다.'));
             } else {
               final Post post = snapshot.data!;
               return Column(
@@ -132,7 +132,6 @@ class _PostDetailState extends State<PostDetail> {
                               ],
                             ),
                           ),
-                          const Divider(),
                           Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Row(
@@ -149,16 +148,13 @@ class _PostDetailState extends State<PostDetail> {
                               ],
                             ),
                           ),
-                          const Divider(),
                           const PostReactions(),
+                          const Divider(indent: 10, endIndent: 10),
                           const SizedBox(height: 10),
                           FutureBuilder<List<Comment>>(
                             future: _fetchComments(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const CircularProgressIndicator();
-                              } else if (snapshot.hasError) {
+                              if (snapshot.hasError) {
                                 return const Text('Error loading comments');
                               } else {
                                 final List<Comment> comments =
@@ -267,7 +263,7 @@ class CommentWidget extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 8.0),
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: AppColors.faintGray,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: Row(
