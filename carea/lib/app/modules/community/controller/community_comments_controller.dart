@@ -2,38 +2,9 @@ import 'dart:async';
 import 'package:carea/app/common/component/toast_popup.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:dio/dio.dart';
-import 'package:intl/intl.dart';
+import 'package:carea/app/data/models/comment_model.dart';
 
 final Dio dio = Dio();
-
-class Comment {
-  int id;
-  int postId;
-  String content;
-  String created_at;
-  String nickname;
-
-  Comment({
-    required this.id,
-    required this.postId,
-    required this.content,
-    required this.created_at,
-    required this.nickname,
-  });
-
-  factory Comment.fromJson(Map<String, dynamic> json) {
-    DateTime createdAt = DateTime.parse(json['created_at']);
-    String formattedCreatedAt = DateFormat('yyyy-MM-dd').format(createdAt);
-
-    return Comment(
-      id: json['id'],
-      postId: json['post_id'],
-      content: json['content'],
-      created_at: formattedCreatedAt,
-      nickname: json['user']['nickname'],
-    );
-  }
-}
 
 // 댓글 출력
 

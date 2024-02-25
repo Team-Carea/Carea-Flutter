@@ -1,5 +1,6 @@
 import 'package:carea/app/common/const/app_colors.dart';
 import "package:carea/app/common/layout/default_layout.dart";
+import 'package:carea/app/data/models/post_model.dart';
 import 'package:carea/app/modules/community/controller/community_controller.dart';
 import 'package:carea/app/modules/community/controller/community_comments_controller.dart';
 import 'package:flutter/cupertino.dart';
