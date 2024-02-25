@@ -56,7 +56,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
       bottomNavigationBar: SizedBox(
         child: BottomNavigationBar(
           selectedItemColor: AppColors.darkGreenPrimaryColor,
-          unselectedItemColor: AppColors.middleGray,
+          unselectedItemColor: AppColors.lightGray,
           selectedLabelStyle:
               const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
           unselectedLabelStyle:
