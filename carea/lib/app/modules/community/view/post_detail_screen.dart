@@ -279,31 +279,33 @@ class CommentWidget extends StatelessWidget {
                     backgroundImage: NetworkImage(comment.profileUrl),
                   ),
                   const SizedBox(width: 12.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        comment.nickname,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
+                  Expanded(
+                    // Flexible 위젯 대신 Expanded 사용하여 남은 공간을 모두 채움
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          comment.nickname,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        comment.content,
-                        style: const TextStyle(fontSize: 14.0),
-                      ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        comment.created_at,
-                        style: const TextStyle(
-                          fontSize: 12.0,
-                          color: Colors
-                              .grey, // AppColors.faintGray를 적절한 값으로 변경하세요.
+                        const SizedBox(height: 4.0),
+                        Text(
+                          comment.content,
+                          style: const TextStyle(fontSize: 14.0),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 4.0),
+                        Text(
+                          comment.created_at,
+                          style: const TextStyle(
+                            fontSize: 12.0,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -356,7 +358,7 @@ class _CommentMakerState extends State<CommentMaker> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
         border: Border.all(
-          color: AppColors.faintGray,
+          color: AppColors.middleGray,
         ),
       ),
       child: Row(
