@@ -32,7 +32,11 @@ void showSuccessConfirmDialog(
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.w400)),
               const SizedBox(height: 18),
-              ExpBar(exp: userPoints * 0.01),
+              ExpBar(
+                exp: (userPoints > 100)
+                    ? (userPoints - 100) * 0.01
+                    : userPoints * 0.01,
+              ),
               Expanded(
                 child: Align(
                   alignment: Alignment.bottomRight,
