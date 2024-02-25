@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:intl/intl.dart';
+import 'package:carea/app/common/component/toast_popup.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
+import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 final Dio dio = Dio();
 
@@ -13,7 +13,6 @@ class Post {
   String category;
   String created_at;
   String? updated_at;
-  Object user;
   String nickname;
   String profileUrl;
 
@@ -24,7 +23,6 @@ class Post {
     required this.category,
     required this.created_at,
     this.updated_at,
-    required this.user,
     required this.nickname,
     required this.profileUrl,
   });
@@ -38,7 +36,7 @@ class Post {
       DateTime updatedAt = DateTime.parse(json['updated_at']);
       formattedUpdatedAt = DateFormat('yyyy-MM-dd').format(updatedAt);
     } else {
-      String formattedUpdatedAt = formattedCreatedAt;
+      formattedUpdatedAt = null;
     }
 
     return Post(
@@ -48,9 +46,9 @@ class Post {
         category: json['category'],
         created_at: formattedCreatedAt,
         updated_at: formattedUpdatedAt,
-        user: json['user'],
+        // user: json['user'],
         nickname: json['user']?['nickname'] ?? "undefined",
-        profileUrl: json['user']['profile_url']);
+        profileUrl: json['user']['profile_url'] ?? "");
   }
 }
 
@@ -97,18 +95,18 @@ class Posts {
         final List<Post> loadedPosts =
             result.map((entry) => Post.fromJson(entry)).toList();
         _items.addAll(loadedPosts);
-        print(_items);
       } else {
-        print('Failed to fetch posts for category $category');
+        throw Exception(
+            'Failed to fetch post with id, status code: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error fetching posts for category $category: $error');
+      rethrow;
     }
   }
 
 // 게시글 상세 조회
 
-  Future<Post?> getPostDetail(int id) async {
+  Future<Post> getPostDetail(int id) async {
     final accessToken = await AuthStorage.getAccessToken();
 
     String baseUrl = 'http://10.0.2.2:8000/posts/$id/';
@@ -122,16 +120,14 @@ class Posts {
         ),
       );
       if (response.statusCode == 200) {
-        Map<String, dynamic> extractedData = response.data;
-        print(extractedData);
+        Map<String, dynamic> extractedData = response.data['result'];
         return Post.fromJson(extractedData);
       } else {
-        print('Failed to fetch post with id $id');
-        return null;
+        throw Exception(
+            'Failed to fetch post with id $id, status code: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error fetching post with id $id: $error');
-      return null;
+      rethrow;
     }
   }
 }
@@ -154,13 +150,13 @@ Future<void> createPost(String title, String content, String category) async {
         'title': title,
         'content': content,
         'category': category,
-        // 'user': 1,
+        'user': 1,
       },
     );
     if (response.statusCode == 201) {
-      print('게시글이 성공적으로 작성되었습니다.');
+      careaToast(toastMsg: '게시글이 작성되었습니다');
     } else {
-      print('게시글 작성에 실패했습니다. 오류 코드: ${response.statusCode}');
+      careaToast(toastMsg: '게시글 작성 중 오류가 생겼습니다');
     }
   } catch (error) {
     print('게시글 작성 중 오류가 발생했습니다: $error');

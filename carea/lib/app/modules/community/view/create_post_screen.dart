@@ -55,16 +55,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.clear, color: Colors.black),
+          icon: const Icon(Icons.clear, color: AppColors.black),
         ),
         title: const Text(
           '새 게시글 작성',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColors.black),
         ),
         actions: [
           IconButton(
             onPressed: _submitPost,
-            icon: const Icon(Icons.check, color: Colors.black),
+            icon: const Icon(Icons.check, color: AppColors.black),
           )
         ],
         centerTitle: true,
@@ -112,14 +112,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           child: TextField(
                             controller: _titleController,
                             textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               hintText: '제목',
-                              hintStyle: const TextStyle(
+                              hintStyle: TextStyle(
                                 fontSize: 18,
                                 color: AppColors.extraLightGray,
                                 fontWeight: FontWeight.bold,
                               ),
-                              focusedBorder: const UnderlineInputBorder(
+                              focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                   color: AppColors.greenPrimaryColor,
                                   width: 2.0,
@@ -127,7 +127,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               ),
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Colors.grey[400]!,
+                                  color: AppColors.lightGray,
                                   width: 1.0,
                                 ),
                               ),
@@ -140,10 +140,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           height: 550,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.grey[200],
+                              color: AppColors.faintGray,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                  color: Colors.grey[400]!, width: 1.0),
+                                  color: AppColors.middleGray, width: 1.0),
                             ),
                             child: TextField(
                               controller: _contentController,

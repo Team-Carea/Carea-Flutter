@@ -23,12 +23,12 @@ class _PostDetailState extends State<PostDetail> {
   final Posts _posts = Posts();
   final Comments _comments = Comments();
 
-  Future<Post?> _fetchPost() async {
+  Future<Post> _fetchPost() async {
     try {
       final post = await _posts.getPostDetail(widget.id);
       return post;
     } catch (error) {
-      return null;
+      throw Exception();
     }
   }
 
@@ -37,7 +37,7 @@ class _PostDetailState extends State<PostDetail> {
       final comments = await _comments.fetchComments(widget.id.toString());
       return comments;
     } catch (error) {
-      return [];
+      throw Exception();
     }
   }
 
@@ -48,23 +48,23 @@ class _PostDetailState extends State<PostDetail> {
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.keyboard_arrow_left_outlined,
-              color: Colors.black),
+              color: AppColors.black),
         ),
         title: Text(
           widget.pageTitle,
-          style: const TextStyle(color: Colors.black),
+          style: const TextStyle(color: AppColors.black),
         ),
         centerTitle: true,
         elevation: 0,
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.more_horiz_outlined, color: Colors.black),
+            icon: const Icon(Icons.more_horiz_outlined, color: AppColors.black),
           )
         ],
       ),
       body: DefaultLayout(
-        child: FutureBuilder<Post?>(
+        child: FutureBuilder<Post>(
           future: _fetchPost(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -84,11 +84,11 @@ class _PostDetailState extends State<PostDetail> {
                         children: [
                           Row(
                             children: [
-                              const SizedBox(width: 30),
+                              const SizedBox(width: 20),
                               SingleChildScrollView(
                                 child: SizedBox(
-                                  width: 80,
-                                  height: 80,
+                                  width: 50,
+                                  height: 50,
                                   child: CircleAvatar(
                                     backgroundImage:
                                         NetworkImage(post.profileUrl),
@@ -118,18 +118,35 @@ class _PostDetailState extends State<PostDetail> {
                           ),
                           Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Text(
-                              post.title,
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.bold),
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: Text(
+                                    post.title,
+                                    style: const TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           const Divider(),
                           Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Text(
-                              post.content,
-                              style: const TextStyle(fontSize: 18),
+                            child: Row(
+                              children: [
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Flexible(
+                                  child: Text(
+                                    post.content,
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           const Divider(),
@@ -174,46 +191,40 @@ class PostReactions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Row(
-          children: [
-            Icon(
-              CupertinoIcons.ellipses_bubble,
-              color: Colors.green,
-              size: 20,
-            ),
-            SizedBox(width: 10),
-            Text('2'),
-          ],
+        const SizedBox(
+          width: 15,
+        ),
+        OutlinedButton.icon(
+          icon: const Icon(CupertinoIcons.ellipses_bubble,
+              color: AppColors.greenPrimaryColor, size: 20),
+          label: const Text('0'),
+          onPressed: () {},
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.greenPrimaryColor,
+            side: const BorderSide(color: AppColors.greenPrimaryColor),
+          ),
         ),
         const SizedBox(width: 20),
-        Row(
-          children: [
-            IconButton(
-              icon: const Icon(
-                CupertinoIcons.heart,
-                color: Colors.red,
-                size: 20,
-              ),
-              onPressed: () {},
-            ),
-            const SizedBox(width: 4),
-            const Text('4'),
-          ],
+        OutlinedButton.icon(
+          icon: const Icon(CupertinoIcons.heart,
+              color: AppColors.redAccentColor, size: 20),
+          label: const Text('2'),
+          onPressed: () {},
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.redAccentColor,
+            side: const BorderSide(color: AppColors.redAccentColor),
+          ),
         ),
         const SizedBox(width: 20),
-        Row(
-          children: [
-            IconButton(
-              icon: const Icon(
-                CupertinoIcons.star,
-                color: Colors.yellow,
-                size: 20,
-              ),
-              onPressed: () {},
-            ),
-            const SizedBox(width: 4),
-            const Text('5'),
-          ],
+        OutlinedButton.icon(
+          icon: const Icon(CupertinoIcons.star,
+              color: AppColors.yellowPrimaryColor, size: 20),
+          label: const Text('1'),
+          onPressed: () {},
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.yellowPrimaryColor,
+            side: const BorderSide(color: AppColors.yellowPrimaryColor),
+          ),
         ),
       ],
     );
@@ -234,9 +245,20 @@ class Comment extends StatelessWidget {
   ) {
     return Column(
       children: [
-        const Text(
-          '댓글',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 20,
+            ),
+            Text(
+              '댓글',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         ListView.builder(
@@ -249,38 +271,41 @@ class Comment extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 8.0),
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: AppColors.faintGray,
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child: Row(
+              child: const Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 20.0,
-                    backgroundColor: AppColors.bluePrimaryColor,
+                    backgroundColor: AppColors.greenPrimaryColor,
                   ),
-                  const SizedBox(width: 12.0),
+                  SizedBox(width: 12.0),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        comment.toString(),
-                        style: const TextStyle(
+                        // comment.nickname,
+                        "",
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16.0,
                         ),
                       ),
-                      const SizedBox(height: 4.0),
+                      SizedBox(height: 4.0),
                       Text(
-                        comment.toString(),
-                        style: const TextStyle(fontSize: 14.0),
+                        // comment.content,
+                        "",
+                        style: TextStyle(fontSize: 14.0),
                       ),
-                      const SizedBox(height: 4.0),
+                      SizedBox(height: 4.0),
                       Text(
-                        comment.toString(),
-                        style: const TextStyle(
+                        // comment.created_at,
+                        "",
+                        style: TextStyle(
                           fontSize: 12.0,
-                          color: Colors.grey,
+                          color: AppColors.faintGray,
                         ),
                       ),
                     ],
@@ -295,10 +320,40 @@ class Comment extends StatelessWidget {
   }
 }
 
-class CommentMaker extends StatelessWidget {
+class CommentMaker extends StatefulWidget {
   const CommentMaker({
     super.key,
   });
+
+  @override
+  State<CommentMaker> createState() => _CommentMakerState();
+}
+
+class _CommentMakerState extends State<CommentMaker> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleSend() async {
+    final String content = _controller.text.trim();
+    if (content.isNotEmpty) {
+      try {
+        // await postComment(postId, content, nickname);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('댓글이 등록되었습니다.')),
+        );
+        _controller.clear();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('댓글 등록에 실패했습니다: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -306,7 +361,7 @@ class CommentMaker extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
         border: Border.all(
-          color: Colors.grey,
+          color: AppColors.faintGray,
         ),
       ),
       child: Row(
@@ -317,9 +372,7 @@ class CommentMaker extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(vertical: 3.0, horizontal: 8.0),
               child: TextFormField(
-                onChanged: (value) {
-                  // Handle change
-                },
+                controller: _controller,
                 decoration: const InputDecoration(
                   hintText: '댓글을 입력해주세요',
                   border: InputBorder.none,
@@ -333,18 +386,16 @@ class CommentMaker extends StatelessWidget {
             child: Ink(
               width: 40,
               decoration: const ShapeDecoration(
-                color: Colors.green,
+                color: AppColors.greenPrimaryColor,
                 shape: CircleBorder(),
               ),
               child: IconButton(
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
                 icon: const Icon(
                   Icons.send,
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
-                onPressed: () {
-                  // Handle send
-                },
+                onPressed: _handleSend,
               ),
             ),
           ),

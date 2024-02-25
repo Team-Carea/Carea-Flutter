@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:carea/app/common/component/toast_popup.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +11,6 @@ class Comment {
   int postId;
   String content;
   String created_at;
-  Object user;
   String nickname;
 
   Comment({
@@ -18,7 +18,6 @@ class Comment {
     required this.postId,
     required this.content,
     required this.created_at,
-    required this.user,
     required this.nickname,
   });
 
@@ -31,7 +30,6 @@ class Comment {
       postId: json['post_id'],
       content: json['content'],
       created_at: formattedCreatedAt,
-      user: json['user'],
       nickname: json['user']['nickname'],
     );
   }
@@ -57,7 +55,7 @@ class Comments {
 
   List<Comment> get items => _items;
 
-  Future<void> getCommentDetail(String postId) async {
+  Future<void> getCommentDetail(postId) async {
     final accessToken = await AuthStorage.getAccessToken();
 
     String baseUrl = 'http://10.0.2.2:8000/posts/$postId/comments/';
@@ -70,19 +68,22 @@ class Comments {
           },
         ),
       );
-      print(response);
       if (response.statusCode == 200) {
         Map<String, dynamic> extractedData = response.data;
         List<dynamic> result = extractedData['result'];
         final List<Comment> loadedComments = result.map((entry) {
           return Comment.fromJson(entry);
         }).toList();
+
+        _items.sort((a, b) {
+          return b.created_at.compareTo(a.created_at);
+        });
         _items.addAll(loadedComments);
       } else {
-        print('Failed to fetch comments');
+        careaToast(toastMsg: '댓글이 출력되지 않았습니다');
       }
     } catch (error) {
-      print('$error');
+      throw Exception();
     }
   }
 }
@@ -110,10 +111,9 @@ Future<void> postComment(int postId, String content, String nickname) async {
     );
     if (response.statusCode == 201) {
       final jsonbody = response.data['result'];
-      print(jsonbody);
       return;
     } else {
-      throw Exception('Failed to post comment');
+      careaToast(toastMsg: '댓글이 등록되지 않았습니다');
     }
   } catch (error) {
     throw Exception('Failed to post comment: $error');

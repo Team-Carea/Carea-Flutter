@@ -43,7 +43,9 @@ class _PostListScreenState extends State<PostListScreen> {
     String serverCategory = _mapCategoryToServerFormat(widget.pageTitle);
     await _posts.fetchAndSetPosts(serverCategory);
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _posts;
+      });
     }
   }
 
@@ -90,10 +92,11 @@ class _PostListScreenState extends State<PostListScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => PostDetail(
-                            pageTitle: widget.pageTitle,
-                            id: post.id,
-                          )),
+                    builder: (context) => PostDetail(
+                      pageTitle: widget.pageTitle,
+                      id: post.id,
+                    ),
+                  ),
                 );
               },
               child: Column(
@@ -101,6 +104,8 @@ class _PostListScreenState extends State<PostListScreen> {
                   ListTile(
                     title: Text(
                       post.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -113,7 +118,7 @@ class _PostListScreenState extends State<PostListScreen> {
                         Text(
                           post.content,
                           style: const TextStyle(fontSize: 16),
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 10),
@@ -124,14 +129,14 @@ class _PostListScreenState extends State<PostListScreen> {
                               post.created_at,
                               style: const TextStyle(
                                 fontSize: 14,
-                                color: Colors.grey,
+                                color: AppColors.black,
                               ),
                             ),
                             Text(
                               post.nickname,
                               style: const TextStyle(
                                 fontSize: 14,
-                                color: Colors.grey,
+                                color: AppColors.black,
                               ),
                             ),
                           ],
@@ -140,7 +145,7 @@ class _PostListScreenState extends State<PostListScreen> {
                     ),
                   ),
                   const Divider(
-                    color: Colors.grey,
+                    color: AppColors.middleGray,
                     thickness: 1,
                   ),
                 ],
