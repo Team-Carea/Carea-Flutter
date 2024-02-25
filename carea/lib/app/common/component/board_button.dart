@@ -4,37 +4,53 @@ import 'package:flutter/material.dart';
 class BoardButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
+  final String subtitle;
 
   const BoardButton({
     Key? key,
     required this.onPressed,
     required this.text,
+    required this.subtitle,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 30),
-        SizedBox(
-          height: 80,
-          width: 350,
-          child: OutlinedButton(
-            onPressed: onPressed,
-            style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.yellowPrimaryColor),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                )),
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Colors.black,
-              ),
-            ),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      height: 80,
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          foregroundColor: AppColors.black,
+          backgroundColor: AppColors.white,
+          side: const BorderSide(color: AppColors.faintGray),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
           ),
         ),
-      ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              text,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                color: AppColors.black,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

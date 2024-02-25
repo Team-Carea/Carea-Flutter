@@ -1,6 +1,7 @@
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/modules/chat/view/chat_room_list_screen.dart';
 import 'package:carea/app/modules/help_confirm/view/helper_confirm_screen.dart';
+import 'package:carea/app/modules/user/view/splash_screen.dart';
 import 'package:carea/app/modules/user/view/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -23,7 +24,9 @@ class _App extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'NotoSans',
       ),
-      home: const LoginScreen(),
+      home: const DefaultLayout(
+        child: SplashScreen(),
+      ),
     );
   }
 }
