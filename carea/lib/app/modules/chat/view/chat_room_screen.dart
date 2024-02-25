@@ -99,23 +99,34 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             ),
         ],
       ),
-      bottomsheet: _buildBottomChatInput(),
-      child: ListView.builder(
-        controller: _scrollController,
-        reverse: true,
-        itemCount: messages.length,
-        itemBuilder: (context, index) {
-          // print(messages.length);
-          // print(messages.length - 1 - index);
-          var message = messages[messages.length - 1 - index];
-          if (index == 0) {
-            message = messages[messages.length - 1];
-          }
+      // bottomsheet: _buildBottomChatInput(),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: getScreenHeight(context) - 140,
+              child: ListView.builder(
+                controller: _scrollController,
+                reverse: true,
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  // print(messages.length);
+                  // print(messages.length - 1 - index);
+                  var message = messages[messages.length - 1 - index];
+                  if (index == 0) {
+                    message = messages[messages.length - 1];
+                  }
 
-          bool isSentByCurrentUser = message.user != currentOpponentUserId;
-          return _buildChatMessage(
-              isSentByCurrentUser, context, message, index);
-        },
+                  bool isSentByCurrentUser =
+                      message.user != currentOpponentUserId;
+                  return _buildChatMessage(
+                      isSentByCurrentUser, context, message, index);
+                },
+              ),
+            ),
+            _buildBottomChatInput(),
+          ],
+        ),
       ),
     );
   }
