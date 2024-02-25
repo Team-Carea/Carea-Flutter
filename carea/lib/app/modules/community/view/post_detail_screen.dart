@@ -48,8 +48,7 @@ class _PostDetailState extends State<PostDetail> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.keyboard_arrow_left_outlined,
-              color: AppColors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.black),
         ),
         title: Text(
           widget.pageTitle,

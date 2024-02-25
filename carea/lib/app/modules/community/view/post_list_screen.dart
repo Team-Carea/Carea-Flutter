@@ -69,7 +69,7 @@ class _PostListScreenState extends State<PostListScreen> {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: const Icon(Icons.keyboard_arrow_left)),
+            icon: const Icon(Icons.arrow_back)),
         title: Center(
           child: Text(widget.pageTitle),
         ),
