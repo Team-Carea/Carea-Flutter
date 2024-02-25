@@ -100,33 +100,34 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         ],
       ),
       // bottomsheet: _buildBottomChatInput(),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: getScreenHeight(context) - 140,
-              child: ListView.builder(
-                controller: _scrollController,
-                reverse: true,
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  // print(messages.length);
-                  // print(messages.length - 1 - index);
-                  var message = messages[messages.length - 1 - index];
-                  if (index == 0) {
-                    message = messages[messages.length - 1];
-                  }
-
-                  bool isSentByCurrentUser =
-                      message.user != currentOpponentUserId;
-                  return _buildChatMessage(
-                      isSentByCurrentUser, context, message, index);
-                },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  shrinkWrap: true,
+                  reverse: true,
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    var message = messages[messages.length - 1 - index];
+                    bool isSentByCurrentUser =
+                        message.user != currentOpponentUserId;
+                    return _buildChatMessage(
+                        isSentByCurrentUser, context, message, index);
+                  },
+                ),
               ),
             ),
-            _buildBottomChatInput(),
-          ],
-        ),
+          ),
+          _buildBottomChatInput(),
+        ],
       ),
     );
   }
@@ -187,8 +188,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             maxWidth: getScreenWidth(context) * 0.7,
           ),
           child: Text(
-            // message.message,
-            '${message.message} 인덱스: ${index.toString()}', // 디버깅용
+            message.message,
             style: const TextStyle(
               color: Colors.black,
               fontSize: 16,
