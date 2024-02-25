@@ -47,4 +47,9 @@ class GeminiResponseModel {
       text: json['candidates'][0]['content']['parts'][0]['text'],
     );
   }
+  factory GeminiResponseModel.fromWebSocketJson(Map<String, dynamic> json) {
+    return GeminiResponseModel(
+      text: json['message'],
+    );
+  }
 }
