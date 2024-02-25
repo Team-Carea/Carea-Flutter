@@ -1,12 +1,15 @@
 import 'package:carea/app/common/component/custom_button.dart';
+import 'package:carea/app/common/component/notice_dialog.dart';
 import 'package:carea/app/common/component/sentence_card.dart';
 import 'package:carea/app/common/component/toast_popup.dart';
 import 'package:carea/app/common/const/app_colors.dart';
 import 'package:carea/app/common/const/styles/app_text_style.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
+import 'package:carea/app/common/util/data_utils.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:carea/app/data/services/help_confirm_service.dart';
 import 'package:carea/app/data/services/stt_service.dart';
+
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 
@@ -19,46 +22,51 @@ class SeekerConfirmScreen extends StatefulWidget {
 }
 
 class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
-  late HelpConfirmService helpConfirmService;
-  String receivedSentence = '아직 문장이 도착하지 않았어요.';
+  late HelpConfirmWebSocketService helpConfirmWebSocketService;
+  String receivedSentence = '아직 인증 문장이 없습니다.';
   final SttService _sttService = SttService();
-  String recognizedSentence = '아직 녹음한 문장이 없어요.';
+  String recognizedSentence = '아직 녹음한 문장이 없습니다.';
+  String? confirmSentence;
+  Color recognizedSentenceCardColor = AppColors.faintGray;
+  Color receivedSentenceCardColor = AppColors.faintGray;
   bool isRecognizing = false;
   bool isRecognizeFinished = false;
+  bool isConfirmed = false;
 
   @override
   void initState() {
     super.initState();
-    helpConfirmService = HelpConfirmService();
-    helpConfirmService.initializeWebsocket(widget.roomId);
-    // onResponse 콜백 설정
-    helpConfirmService.onOtherResponse = (String sentence) {
+    helpConfirmWebSocketService = HelpConfirmWebSocketService();
+    helpConfirmWebSocketService.initializeWebsocket(widget.roomId);
+
+    // 인증문장 수신 콜백 설정
+    helpConfirmWebSocketService.onSentenceResponse = (String sentence) {
       careaToast(toastMsg: '문장 수신이 완료되었습니다.');
       setState(() {
-        receivedSentence = sentence;
+        receivedSentence = DataUtils.getFormattedText(sentence);
+        receivedSentenceCardColor = AppColors.lightBlueGray;
       });
     };
 
     // STT 기능
     _sttService.onRecognizingStarted = () {
       setState(() {
+        recognizedSentence = '녹음 중이에요...';
+        recognizedSentenceCardColor = AppColors.faintGray;
         isRecognizing = true;
       });
     };
-    _sttService.onResultReceived = (resultText, recognizeFinished) {
+    _sttService.onResultReceived = (resultText) {
       setState(() {
+        resultText = DataUtils.getFormattedText(resultText);
         recognizedSentence = resultText;
-        // 테스트용 STT 결과 문장 출력
-        print(recognizedSentence);
-        // 음성 종료 후
-        if (recognizeFinished) {
-          isRecognizeFinished = true;
-        }
+        isRecognizeFinished = true;
       });
     };
     _sttService.onRecognizingStopped = () {
       setState(() {
         isRecognizing = false;
+        isRecognizeFinished = true;
       });
     };
   }
@@ -71,7 +79,7 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            helpConfirmService.dispose();
+            helpConfirmWebSocketService.dispose();
             Navigator.pop(context);
           },
         ),
@@ -85,15 +93,16 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(height: getScreenHeight(context) * 0.05),
+                SizedBox(height: getScreenHeight(context) * 0.02),
                 const Text(
                   '인증 문장',
                   style: screenContentTitleTextStyle,
                 ),
                 const SizedBox(height: 12),
+                // 인증 문장용 카드
                 SentenceCard(
                   text: receivedSentence,
-                  bgcolor: AppColors.faintGray,
+                  bgcolor: receivedSentenceCardColor,
                   textStyle: sentenceTextStyle,
                 ),
                 SizedBox(height: getScreenHeight(context) * 0.05),
@@ -102,14 +111,27 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
                   style: screenContentTitleTextStyle,
                 ),
                 const SizedBox(height: 12),
+                // 녹음 문장용 카드
                 SentenceCard(
                   text: recognizedSentence,
-                  bgcolor: AppColors.faintGray,
+                  bgcolor: recognizedSentenceCardColor,
                   textStyle: sentenceTextStyle,
                 ),
-                SizedBox(height: getScreenHeight(context) * 0.10),
-                recordingIndicator(),
+                SizedBox(height: getScreenHeight(context) * 0.02),
+                CustomElevatedButton(
+                  text: '인증하기',
+                  screenRoute: isConfirmed ? null : confirmHelp,
+                  icon: Icons.check_circle,
+                )
               ],
+            ),
+          ),
+          Positioned(
+            bottom: getScreenHeight(context) * 0.20,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: recordingIndicator(),
             ),
           ),
           Positioned(
@@ -128,22 +150,51 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
     );
   }
 
-  Future<void> toggleRecording() async {
-    print(isRecognizing);
+  void confirmHelp() async {
+    HelpConfirmDioService helpConfirmDioService = HelpConfirmDioService();
 
+    setState(() {
+      confirmSentence = recognizedSentence;
+      recognizedSentenceCardColor = AppColors.faintGray;
+      recognizedSentence = '인증 여부 확인 중이에요..👀';
+    });
+
+    isConfirmed = DataUtils.compareTwoKoreanSentences(
+      receivedSentence,
+      confirmSentence!.replaceAll(RegExp(r'\s'), ''),
+    );
+    if (!isConfirmed) {
+      await Future.delayed(const Duration(seconds: 2));
+      // 인증 실패
+      setState(() {
+        recognizedSentence = confirmSentence!;
+        recognizedSentenceCardColor = AppColors.yellowPrimaryColor;
+      });
+      if (!mounted) return;
+      showFailureConfirmDialog(context, receivedSentence, recognizedSentence);
+    } else {
+      // 인증 성공
+      // 도움제공자에게 인증완료 메시지 전송
+      helpConfirmWebSocketService.sendConfirmation();
+      // 경험치 증가 api 호출
+      final pointInfo = await helpConfirmDioService.getPoints(widget.roomId);
+      if (!mounted) return;
+
+      showSuccessConfirmDialog(
+          context, pointInfo.userPoints, pointInfo.increasedPoints);
+
+      setState(() {
+        recognizedSentence = confirmSentence!;
+        recognizedSentenceCardColor = AppColors.lightBlueGray;
+      });
+    }
+  }
+
+  Future<void> toggleRecording() async {
     if (isRecognizing) {
       // 녹음 중지
       _sttService.stopRecording();
-      setState(() {
-        recognizedSentence = '인증 확인 중이에요..👀';
-        isRecognizeFinished = true;
-        // TODO: 결과 비교 후 Dialog 띄우는 로직 추가
-      });
     } else {
-      setState(() {
-        recognizedSentence = '녹음 중이에요...';
-        isRecognizing = true;
-      });
       // 녹음 시작
       _sttService.streamingRecognize();
     }

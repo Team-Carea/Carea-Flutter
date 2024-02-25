@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:carea/app/common/util/data_utils.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -37,7 +35,6 @@ class SttService {
       }
     });
 
-    // isRecognizing 상태값 true로 변경
     onRecognizingStarted!();
 
     // 마이크 권한 요청
@@ -66,10 +63,10 @@ class SttService {
       final currentText =
           data.results.map((e) => e.alternatives.first.transcript).join(' ');
 
-      responseText = DataUtils.getFormattedText(currentText);
+      responseText = currentText;
       isRecognizeFinished = true;
 
-      onResultReceived?.call(responseText, isRecognizeFinished);
+      onResultReceived?.call(responseText);
     }, onDone: () {
       onRecognizingStopped!();
     });
@@ -80,7 +77,6 @@ class SttService {
     await _audioStreamSubscription?.cancel();
     await _audioStream?.close();
     await _recordingDataSubscription?.cancel();
-    onRecognizingStopped!();
   }
 
   RecognitionConfig _getConfig() => RecognitionConfig(

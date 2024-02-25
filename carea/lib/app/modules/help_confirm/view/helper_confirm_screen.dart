@@ -1,4 +1,5 @@
 import 'package:carea/app/common/component/custom_button.dart';
+import 'package:carea/app/common/component/notice_dialog.dart';
 import 'package:carea/app/common/component/sentence_card.dart';
 import 'package:carea/app/common/component/toast_popup.dart';
 import 'package:carea/app/common/const/app_colors.dart';
@@ -20,19 +21,32 @@ class HelperConfirmScreen extends StatefulWidget {
 }
 
 class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
-  late HelpConfirmService helpConfirmService;
+  late HelpConfirmWebSocketService helpConfirmWebSocketService;
+  late HelpConfirmDioService helpConfirmDioService;
   String sentence = '아직 생성된 문장이 없습니다.';
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    helpConfirmService = HelpConfirmService();
-    helpConfirmService.initializeWebsocket(widget.roomId);
+    helpConfirmWebSocketService = HelpConfirmWebSocketService();
+    helpConfirmDioService = HelpConfirmDioService();
+    helpConfirmWebSocketService.initializeWebsocket(widget.roomId);
 
-    // onResponse 콜백 설정
-    helpConfirmService.onMyResponse = () {
+    // 인증문장 전송 콜백 설정
+    helpConfirmWebSocketService.onMySentenceResponse = () {
       careaToast(toastMsg: '전송이 완료되었습니다.');
+    };
+
+    // 도움인증 메시지 수신 콜백 설정
+    helpConfirmWebSocketService.onConfimResponse = () async {
+      final pointInfo = await helpConfirmDioService.getPoints(widget.roomId);
+      if (!mounted) return;
+      if (pointInfo.userPoints >= 90) {
+        showLevelUpDialog(context); // 레벨업 다이얼로그
+      }
+      showSuccessConfirmDialog(context, pointInfo.userPoints,
+          pointInfo.increasedPoints); // 인증완료 다이얼로그
     };
   }
 
@@ -44,7 +58,7 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            helpConfirmService.dispose();
+            helpConfirmWebSocketService.dispose();
             Navigator.pop(context);
           },
         ),
@@ -56,7 +70,7 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: getScreenHeight(context) * 0.05),
+            SizedBox(height: getScreenHeight(context) * 0.04),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -86,8 +100,8 @@ class _HelperConfirmScreenState extends State<HelperConfirmScreen> {
             CustomElevatedButton(
               text: '전송하기',
               screenRoute: () {
-                if (helpConfirmService.isInitialized) {
-                  helpConfirmService
+                if (helpConfirmWebSocketService.isInitialized) {
+                  helpConfirmWebSocketService
                       .sendSentence(sentence.replaceAll('\n', ''));
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(

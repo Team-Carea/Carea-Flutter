@@ -2,7 +2,6 @@ import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:carea/app/data/models/user_model.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 
 class UserService {
   final Dio dio = Dio();

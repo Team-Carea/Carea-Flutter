@@ -105,9 +105,16 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         reverse: true,
         itemCount: messages.length,
         itemBuilder: (context, index) {
+          // print(messages.length);
+          // print(messages.length - 1 - index);
           var message = messages[messages.length - 1 - index];
+          if (index == 0) {
+            message = messages[messages.length - 1];
+          }
+
           bool isSentByCurrentUser = message.user != currentOpponentUserId;
-          return _buildChatMessage(isSentByCurrentUser, context, message);
+          return _buildChatMessage(
+              isSentByCurrentUser, context, message, index);
         },
       ),
     );
@@ -129,18 +136,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.send),
-            onPressed: () {
-              _handleSendPressed();
-            },
-          ),
+              icon: const Icon(Icons.send), onPressed: _handleSendPressed),
         ],
       ),
     );
   }
 
-  Widget _buildChatMessage(
-      bool isSentByCurrentUser, BuildContext context, ChatMessage message) {
+  Widget _buildChatMessage(bool isSentByCurrentUser, BuildContext context,
+      ChatMessage message, int index) {
     return Padding(
       padding: isSentByCurrentUser
           ? const EdgeInsets.only(right: 8.0)
@@ -173,8 +176,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             maxWidth: getScreenWidth(context) * 0.7,
           ),
           child: Text(
-            message.message,
-            // message.message + message.id.toString(),
+            // message.message,
+            '${message.message} 인덱스: ${index.toString()}', // 디버깅용
             style: const TextStyle(
               color: Colors.black,
               fontSize: 16,
@@ -191,23 +194,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   void _handleSendPressed() {
     if (_controller.text.isNotEmpty) {
-      setState(() {
-        final newMessage = ChatMessage(
-          message: _controller.text,
-          createdAt: DateTime.now(),
-        );
-        // 화면에 메시지 추가 및 전송
-        messages.add(newMessage);
-        chatService.sendMessage(newMessage);
-      });
+      final newMessage = ChatMessage(
+        message: _controller.text,
+        createdAt: DateTime.now(),
+      );
+      // 화면에 메시지 추가 및 전송
+      messages.add(newMessage);
+      chatService.sendMessage(newMessage);
+
+      setState(() {});
       _controller.clear();
     }
-    // 화면 하단으로 스크롤 이동
-    _scrollController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
   }
 
   @override

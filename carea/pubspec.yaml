@@ -48,7 +48,6 @@ dependencies:
   rxdart: ^0.27.3
   google_speech: ^5.2.0
   google_maps_flutter: ^2.5.3
-  highlight_text: ^1.7.0
   percent_indicator: ^4.2.3
   flutter_chat_types: ^3.6.2
   flutter_chat_ui: ^1.6.10
