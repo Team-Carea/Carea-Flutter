@@ -5,16 +5,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 Future<GeminiResponseModel> generateRandomSentence() async {
   var dio = Dio();
 
-  dio.interceptors.add(
-    LogInterceptor(
-        responseBody: true,
-        error: true,
-        requestHeader: true,
-        responseHeader: true,
-        request: true,
-        requestBody: true),
-  );
-
   String geminiApiKey = dotenv.get("GEMINI_API_KEY");
   final url =
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=$geminiApiKey';

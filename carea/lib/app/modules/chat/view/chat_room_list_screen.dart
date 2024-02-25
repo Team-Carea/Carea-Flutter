@@ -1,10 +1,8 @@
 import 'package:carea/app/common/component/chat_list_tile.dart';
 import 'package:carea/app/common/const/app_colors.dart';
-import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/layout/default_layout.dart';
 import 'package:carea/app/data/models/chat_room_list_model.dart';
 import 'package:carea/app/modules/chat/controller/chat_room_controller.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoomListScreen extends StatefulWidget {
