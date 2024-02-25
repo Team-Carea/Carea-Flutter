@@ -23,10 +23,9 @@ class SeekerConfirmScreen extends StatefulWidget {
 
 class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
   late HelpConfirmWebSocketService helpConfirmWebSocketService;
-  // 비교를 위한 임시 더미데이터 TODO: 더미데이터 삭제
-  String receivedSentence = "감사하옵니다.";
+  String receivedSentence = '아직 인증 문장이 없습니다.';
   final SttService _sttService = SttService();
-  String recognizedSentence = '아직 녹음한 문장이 없어요.';
+  String recognizedSentence = '아직 녹음한 문장이 없습니다.';
   String? confirmSentence;
   Color recognizedSentenceCardColor = AppColors.faintGray;
   Color receivedSentenceCardColor = AppColors.faintGray;
@@ -39,11 +38,13 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
     super.initState();
     helpConfirmWebSocketService = HelpConfirmWebSocketService();
     helpConfirmWebSocketService.initializeWebsocket(widget.roomId);
-    // onResponse 콜백 설정
-    helpConfirmWebSocketService.onOtherResponse = (String sentence) {
+
+    // 인증문장 수신 콜백 설정
+    helpConfirmWebSocketService.onSentenceResponse = (String sentence) {
       careaToast(toastMsg: '문장 수신이 완료되었습니다.');
       setState(() {
-        receivedSentence = sentence;
+        receivedSentence = DataUtils.getFormattedText(sentence);
+        receivedSentenceCardColor = AppColors.lightBlueGray;
       });
     };
 
@@ -57,6 +58,7 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
     };
     _sttService.onResultReceived = (resultText) {
       setState(() {
+        resultText = DataUtils.getFormattedText(resultText);
         recognizedSentence = resultText;
         isRecognizeFinished = true;
       });
@@ -172,19 +174,19 @@ class _SeekerConfirmScreenState extends State<SeekerConfirmScreen> {
       showFailureConfirmDialog(context, receivedSentence, recognizedSentence);
     } else {
       // 인증 성공
-
-      // 도움제공자에게 인증완료 메시지 전송 TODO: API 수정 이후 다시 구현
-      // helpConfirmWebSocketService.sendConfirmation('isConfirmed');
+      // 도움제공자에게 인증완료 메시지 전송
+      helpConfirmWebSocketService.sendConfirmation();
       // 경험치 증가 api 호출
       final pointInfo = await helpConfirmDioService.getPoints(widget.roomId);
+      if (!mounted) return;
+
+      showSuccessConfirmDialog(
+          context, pointInfo.userPoints, pointInfo.increasedPoints);
 
       setState(() {
         recognizedSentence = confirmSentence!;
         recognizedSentenceCardColor = AppColors.lightBlueGray;
       });
-      if (!mounted) return;
-      showSuccessConfirmDialog(
-          context, pointInfo.userPoints, pointInfo.increasedPoints);
     }
   }
 

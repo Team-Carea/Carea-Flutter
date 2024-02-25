@@ -11,8 +11,9 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 class HelpConfirmWebSocketService {
   late WebSocketChannel channel;
   bool isInitialized = false;
-  Function? onMyResponse;
-  Function? onOtherResponse;
+  Function? onMySentenceResponse;
+  Function? onSentenceResponse;
+  Function? onConfimResponse;
 
   Future<void> initializeWebsocket(String roomId) async {
     final accessToken = await AuthStorage.getAccessToken();
@@ -22,21 +23,19 @@ class HelpConfirmWebSocketService {
     isInitialized = true;
     channel.stream.listen((event) {
       final response = jsonDecode(event);
-      print(response);
-      // TODO: 응답값에 따라 다른 함수 실행하도록 코드 변경.
-      // 인증문장 송수신 관련 기능
-      noticeSentenceResponse(response);
-      // 인증완료 메시지 송수신 관련 기능
-      noticeConfirmResponse(response);
+      if (response['message'] == '인증완료') {
+        // 인증완료 메시지 송수신 관련 기능
+        noticeConfirmResponse(response);
+      } else {
+        // 인증문장 송수신 관련 기능
+        noticeSentenceResponse(response);
+      }
     });
   }
 
   void sendSentence(String sentence) {
     if (isInitialized) {
-      final sentencePayload = jsonEncode({
-        'type': 'text',
-        'message': sentence,
-      });
+      final sentencePayload = jsonEncode({'message': sentence});
       channel.sink.add(sentencePayload);
     } else {
       print("WebSocket is not initialized.");
@@ -44,28 +43,28 @@ class HelpConfirmWebSocketService {
   }
 
   // 인증완료 메시지 전송을 위한 함수
-  void sendConfirmation(String sentence) {
+  void sendConfirmation() {
     if (isInitialized) {
-      final sentencePayload = jsonEncode({
-        'type': 'text',
-        'message': sentence,
-      });
+      final sentencePayload = jsonEncode({'message': '인증완료'});
       channel.sink.add(sentencePayload);
     }
   }
 
   void noticeSentenceResponse(response) {
-    if (onMyResponse != null) {
-      onMyResponse!();
-    }
-    if (onOtherResponse != null) {
+    if (onMySentenceResponse != null) {
+      onMySentenceResponse!();
+    } else if (onSentenceResponse != null) {
       final receivedSentence = GeminiResponseModel.fromWebSocketJson(response);
-      onOtherResponse!(receivedSentence.text);
+      onSentenceResponse!(receivedSentence.text);
     }
   }
 
   // 인증완료 메시지 송수신
-  void noticeConfirmResponse(response) {}
+  void noticeConfirmResponse(response) {
+    if (onConfimResponse != null) {
+      onConfimResponse!();
+    }
+  }
 
   void dispose() {
     if (isInitialized) {
