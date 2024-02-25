@@ -2,6 +2,7 @@ import 'package:carea/app/common/const/app_colors.dart';
 import "package:carea/app/common/layout/default_layout.dart";
 import 'package:carea/app/data/models/post_model.dart';
 import 'package:carea/app/modules/community/controller/community_controller.dart';
+import 'package:carea/app/data/models/comment_model.dart';
 import 'package:carea/app/modules/community/controller/community_comments_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,12 +34,11 @@ class _PostDetailState extends State<PostDetail> {
     }
   }
 
-  Future<List<Object>> _fetchComments() async {
+  Future<List<Comment>> _fetchComments() async {
     try {
-      final comments = await _comments.fetchComments(widget.id.toString());
-      return comments;
+      return await _comments.fetchComments(widget.id.toString());
     } catch (error) {
-      throw Exception();
+      throw Exception('Failed to load comments');
     }
   }
 
@@ -153,7 +153,7 @@ class _PostDetailState extends State<PostDetail> {
                           const Divider(),
                           const PostReactions(),
                           const SizedBox(height: 10),
-                          FutureBuilder<List<Object>>(
+                          FutureBuilder<List<Comment>>(
                             future: _fetchComments(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
@@ -162,9 +162,9 @@ class _PostDetailState extends State<PostDetail> {
                               } else if (snapshot.hasError) {
                                 return const Text('Error loading comments');
                               } else {
-                                final List<Object> comments =
+                                final List<Comment> comments =
                                     snapshot.data ?? [];
-                                return Comment(comments: comments);
+                                return CommentWidget(comments: comments);
                               }
                             },
                           )
@@ -232,26 +232,22 @@ class PostReactions extends StatelessWidget {
   }
 }
 
-class Comment extends StatelessWidget {
-  const Comment({
-    super.key,
-    required this.comments,
-  });
+class CommentWidget extends StatelessWidget {
+  final List<Comment> comments;
 
-  final List<Object> comments;
+  const CommentWidget({
+    Key? key,
+    required this.comments,
+  }) : super(key: key);
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Column(
       children: [
         const Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(
-              width: 20,
-            ),
+            SizedBox(width: 20),
             Text(
               '댓글',
               style: TextStyle(
@@ -275,38 +271,36 @@ class Comment extends StatelessWidget {
                 color: AppColors.faintGray,
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child: const Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
                     radius: 20.0,
-                    backgroundColor: AppColors.greenPrimaryColor,
+                    backgroundImage: NetworkImage(comment.profileUrl),
                   ),
-                  SizedBox(width: 12.0),
+                  const SizedBox(width: 12.0),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        // comment.nickname,
-                        "",
-                        style: TextStyle(
+                        comment.nickname,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16.0,
                         ),
                       ),
-                      SizedBox(height: 4.0),
+                      const SizedBox(height: 4.0),
                       Text(
-                        // comment.content,
-                        "",
-                        style: TextStyle(fontSize: 14.0),
+                        comment.content,
+                        style: const TextStyle(fontSize: 14.0),
                       ),
-                      SizedBox(height: 4.0),
+                      const SizedBox(height: 4.0),
                       Text(
-                        // comment.created_at,
-                        "",
-                        style: TextStyle(
+                        comment.created_at,
+                        style: const TextStyle(
                           fontSize: 12.0,
-                          color: AppColors.faintGray,
+                          color: Colors
+                              .grey, // AppColors.faintGray를 적절한 값으로 변경하세요.
                         ),
                       ),
                     ],
