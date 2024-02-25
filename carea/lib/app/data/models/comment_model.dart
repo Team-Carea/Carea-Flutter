@@ -6,6 +6,7 @@ class Comment {
   String content;
   String created_at;
   String nickname;
+  String profileUrl;
 
   Comment({
     required this.id,
@@ -13,6 +14,7 @@ class Comment {
     required this.content,
     required this.created_at,
     required this.nickname,
+    required this.profileUrl,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
@@ -20,11 +22,11 @@ class Comment {
     String formattedCreatedAt = DateFormat('yyyy-MM-dd').format(createdAt);
 
     return Comment(
-      id: json['id'],
-      postId: json['post_id'],
-      content: json['content'],
-      created_at: formattedCreatedAt,
-      nickname: json['user']['nickname'],
-    );
+        id: json['id'],
+        postId: json['post_id'],
+        content: json['content'],
+        created_at: formattedCreatedAt,
+        nickname: json['user']['nickname'],
+        profileUrl: json['user']['profile_url']);
   }
 }

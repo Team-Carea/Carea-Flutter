@@ -9,26 +9,12 @@ final Dio dio = Dio();
 // 댓글 출력
 
 class Comments {
-  late List<Comment> _items;
-
-  Comments() {
-    _items = [];
-    _items.sort((a, b) {
-      return b.created_at.compareTo(a.created_at);
-    });
-  }
-
   Future<List<Comment>> fetchComments(String postId) async {
-    final comments = Comments();
-    await comments.getCommentDetail(postId);
-    return comments.items;
+    return await getCommentDetail(int.parse(postId));
   }
 
-  List<Comment> get items => _items;
-
-  Future<void> getCommentDetail(postId) async {
+  Future<List<Comment>> getCommentDetail(int postId) async {
     final accessToken = await AuthStorage.getAccessToken();
-
     String baseUrl = 'http://10.0.2.2:8000/posts/$postId/comments/';
     try {
       final response = await dio.get(
@@ -40,21 +26,15 @@ class Comments {
         ),
       );
       if (response.statusCode == 200) {
-        Map<String, dynamic> extractedData = response.data;
-        List<dynamic> result = extractedData['result'];
-        final List<Comment> loadedComments = result.map((entry) {
-          return Comment.fromJson(entry);
-        }).toList();
-
-        _items.sort((a, b) {
-          return b.created_at.compareTo(a.created_at);
-        });
-        _items.addAll(loadedComments);
+        List<dynamic> result = response.data['result'];
+        List<Comment> comments =
+            result.map((commentData) => Comment.fromJson(commentData)).toList();
+        return comments;
       } else {
-        careaToast(toastMsg: '댓글이 출력되지 않았습니다');
+        return [];
       }
     } catch (error) {
-      throw Exception();
+      throw Exception('Failed to load comments');
     }
   }
 }
@@ -82,6 +62,7 @@ Future<void> postComment(int postId, String content, String nickname) async {
     );
     if (response.statusCode == 201) {
       final jsonbody = response.data['result'];
+
       return;
     } else {
       careaToast(toastMsg: '댓글이 등록되지 않았습니다');
