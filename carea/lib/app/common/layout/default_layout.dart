@@ -21,6 +21,7 @@ class DefaultLayout extends StatelessWidget {
       appBar: appbar,
       body: child,
       bottomSheet: bottomsheet,
+      resizeToAvoidBottomInset: true,
     );
   }
 }

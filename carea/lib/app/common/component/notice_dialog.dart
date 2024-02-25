@@ -1,9 +1,11 @@
 import 'package:carea/app/common/component/progress_bar.dart';
 import 'package:carea/app/common/const/app_colors.dart';
+import 'package:carea/app/common/util/data_utils.dart';
 import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:flutter/material.dart';
 
-void showSuccessConfirmDialog(BuildContext context) {
+void showSuccessConfirmDialog(
+    BuildContext context, int userPoints, int increasedPoints) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -26,10 +28,15 @@ void showSuccessConfirmDialog(BuildContext context) {
               const SizedBox(height: 18),
               const Text('도움 인증 경험치',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
-              const Text('+10xp ✨',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400)),
+              Text('+${increasedPoints}xp ✨',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w400)),
               const SizedBox(height: 18),
-              const ExpBar(exp: 0.5),
+              ExpBar(
+                exp: (userPoints > 100)
+                    ? (userPoints - 100) * 0.01
+                    : userPoints * 0.01,
+              ),
               Expanded(
                 child: Align(
                   alignment: Alignment.bottomRight,
@@ -47,7 +54,11 @@ void showSuccessConfirmDialog(BuildContext context) {
   );
 }
 
-void showFailureConfirmDialog(BuildContext context) {
+void showFailureConfirmDialog(
+    BuildContext context, String baseSentence, String comparingSentence) {
+  List<TextSpan> highlightedText =
+      DataUtils.markDifferentWord(baseSentence, comparingSentence);
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -69,13 +80,15 @@ void showFailureConfirmDialog(BuildContext context) {
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
-                const Text('방금 녹음된 문장:',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+                const Text('인증 문장과 녹음된 문장의 비교 결과:',
+                    style: TextStyle(
+                        color: AppColors.darkGray,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400)),
                 const SizedBox(height: 14),
-                const Text('"녹음된 문장이 들어가는 위치. 불일치 부분 표시까지 된다면 좋음."',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.w400)),
+                RichText(
+                  text: TextSpan(children: highlightedText),
+                ),
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.bottomRight,

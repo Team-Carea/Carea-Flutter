@@ -1,57 +1,10 @@
 import 'dart:async';
+import 'package:carea/app/common/component/toast_popup.dart';
+import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:dio/dio.dart';
-import 'package:intl/intl.dart';
-
-const accessToken =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NjE5OTU1LCJpYXQiOjE3MDg0NDcxNTUsImp0aSI6ImM5ZGQ0NjJiODcyOTQwMWRhODE3MjY3YzIxOWZkNjA4IiwidXNlcl9pZCI6Mn0.R2fMfKYULnTC1thLTTsJiI3ubvpu4IlOPfZA1maSxQs';
+import 'package:carea/app/data/models/post_model.dart';
 
 final Dio dio = Dio();
-
-class Post {
-  int id;
-  String title;
-  String content;
-  String category;
-  String created_at;
-  String? updated_at;
-  Object user;
-  String nickname;
-
-  Post({
-    required this.id,
-    required this.title,
-    required this.content,
-    required this.category,
-    required this.created_at,
-    this.updated_at,
-    required this.user,
-    required this.nickname,
-  });
-
-  factory Post.fromJson(Map<String, dynamic> json) {
-    DateTime createdAt = DateTime.parse(json['created_at']);
-    String formattedCreatedAt = DateFormat('yyyy-MM-dd').format(createdAt);
-    String? formattedUpdatedAt;
-
-    if (json['updated_at'] != null) {
-      DateTime updatedAt = DateTime.parse(json['updated_at']);
-      formattedUpdatedAt = DateFormat('yyyy-MM-dd').format(updatedAt);
-    } else {
-      String formattedUpdatedAt = formattedCreatedAt;
-    }
-
-    return Post(
-      id: json['id'],
-      title: json['title'],
-      content: json['content'],
-      category: json['category'],
-      created_at: formattedCreatedAt,
-      updated_at: formattedUpdatedAt,
-      user: json['user'],
-      nickname: json['user']?['nickname'] ?? "undefined",
-    );
-  }
-}
 
 class Posts {
   final List<Post> _items = [];
@@ -79,6 +32,8 @@ class Posts {
   }
 
   Future<void> _fetchPostsForCategory(String category) async {
+    final accessToken = await AuthStorage.getAccessToken();
+
     String baseUrl = 'http://10.0.2.2:8000/posts/$category/';
     try {
       final response = await dio.get(
@@ -94,18 +49,20 @@ class Posts {
         final List<Post> loadedPosts =
             result.map((entry) => Post.fromJson(entry)).toList();
         _items.addAll(loadedPosts);
-        print(_items);
       } else {
-        print('Failed to fetch posts for category $category');
+        throw Exception(
+            'Failed to fetch post with id, status code: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error fetching posts for category $category: $error');
+      rethrow;
     }
   }
 
 // 게시글 상세 조회
 
-  Future<Post?> getPostDetail(int id) async {
+  Future<Post> getPostDetail(int id) async {
+    final accessToken = await AuthStorage.getAccessToken();
+
     String baseUrl = 'http://10.0.2.2:8000/posts/$id/';
     try {
       final response = await dio.get(
@@ -117,16 +74,14 @@ class Posts {
         ),
       );
       if (response.statusCode == 200) {
-        Map<String, dynamic> extractedData = response.data;
-        print(extractedData);
+        Map<String, dynamic> extractedData = response.data['result'];
         return Post.fromJson(extractedData);
       } else {
-        print('Failed to fetch post with id $id');
-        return null;
+        throw Exception(
+            'Failed to fetch post with id $id, status code: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error fetching post with id $id: $error');
-      return null;
+      rethrow;
     }
   }
 }
@@ -134,6 +89,8 @@ class Posts {
 // 게시글 등록
 
 Future<void> createPost(String title, String content, String category) async {
+  final accessToken = await AuthStorage.getAccessToken();
+
   String baseUrl = 'http://10.0.2.2:8000/posts/$category/';
   try {
     final response = await dio.post(
@@ -151,9 +108,9 @@ Future<void> createPost(String title, String content, String category) async {
       },
     );
     if (response.statusCode == 201) {
-      print('게시글이 성공적으로 작성되었습니다.');
+      careaToast(toastMsg: '게시글이 작성되었습니다');
     } else {
-      print('게시글 작성에 실패했습니다. 오류 코드: ${response.statusCode}');
+      careaToast(toastMsg: '게시글 작성 중 오류가 생겼습니다');
     }
   } catch (error) {
     print('게시글 작성 중 오류가 발생했습니다: $error');

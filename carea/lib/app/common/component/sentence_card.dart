@@ -22,6 +22,8 @@ class SentenceCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 36),
         child: Text(
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
           text,
           style: textStyle,
           textAlign: TextAlign.center,
