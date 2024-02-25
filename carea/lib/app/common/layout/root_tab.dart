@@ -49,13 +49,13 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         physics: const NeverScrollableScrollPhysics(),
         children: const [
           CommunityScreen(),
-          ChatRoomListScreen(),
           NearhelpScreen(),
+          ChatRoomListScreen(),
         ],
       ),
       bottomNavigationBar: SizedBox(
         child: BottomNavigationBar(
-          selectedItemColor: AppColors.greenPrimaryColor,
+          selectedItemColor: AppColors.darkGreenPrimaryColor,
           unselectedItemColor: AppColors.middleGray,
           selectedLabelStyle:
               const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
@@ -71,12 +71,12 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
               label: '커뮤니티',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.people_outline),
-              label: '대화 목록',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.location_on_outlined),
               label: '도움 찾기',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.people_outline),
+              label: '채팅',
             ),
           ],
         ),
