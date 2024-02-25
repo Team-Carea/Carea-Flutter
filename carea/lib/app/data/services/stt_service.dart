@@ -63,7 +63,7 @@ class SttService {
       final currentText =
           data.results.map((e) => e.alternatives.first.transcript).join(' ');
 
-      responseText = DataUtils.getFormattedText(currentText);
+      responseText = currentText;
       isRecognizeFinished = true;
 
       onResultReceived?.call(responseText);

@@ -56,9 +56,6 @@ class DataUtils {
 
     // 전체 글자 중 일치하는 글자의 비율을 계산
     double matchingRate = matchingCharCount / minLength;
-
-    print(matchingRate);
-
     // 일치 비율이 80% 이상인지 판단함
     return matchingRate >= 0.8;
   }
