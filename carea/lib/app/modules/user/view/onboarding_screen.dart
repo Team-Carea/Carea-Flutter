@@ -56,7 +56,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               color: AppColors.white,
               child: TextButton(
                 child: const Text(
-                  "Finish",
+                  "Start Carea!",
                   style: TextStyle(
                       color: AppColors.darkGreenPrimaryColor, fontSize: 24),
                 ),

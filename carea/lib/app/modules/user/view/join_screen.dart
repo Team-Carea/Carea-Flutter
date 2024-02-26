@@ -9,6 +9,7 @@ import 'package:carea/app/common/util/layout_utils.dart';
 import 'package:carea/app/common/util/random_profile.dart';
 import 'package:carea/app/data/models/user_model.dart';
 import 'package:carea/app/data/services/user_service.dart';
+import 'package:carea/app/modules/user/view/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 
 class JoinScreen extends StatefulWidget {
@@ -113,8 +114,8 @@ class _JoinScreenState extends State<JoinScreen> {
 
                     // 정상 회원가입 -> RootTab 이동
                     if (!mounted) return;
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const RootTab()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => const OnboardingScreen()));
                   },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.01),
