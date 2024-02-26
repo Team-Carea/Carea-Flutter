@@ -79,7 +79,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         centerTitle: true,
         title: Text(widget.opponent.nickname),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             chatService.dispose();
             // 가장 최신 메시지 정보 return

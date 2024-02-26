@@ -24,9 +24,7 @@ class _App extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'NotoSans',
       ),
-      home: const DefaultLayout(
-        child: SplashScreen(),
-      ),
+      home: const SplashScreen(),
     );
   }
 }

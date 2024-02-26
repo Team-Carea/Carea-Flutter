@@ -24,9 +24,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
+    return DefaultLayout(
+      appbar: AppBar(
         title: const Text(
           '커뮤니티',
           textAlign: TextAlign.center,
@@ -47,32 +46,33 @@ class _CommunityScreenState extends State<CommunityScreen> {
         ],
         elevation: 0,
       ),
-      body: DefaultLayout(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Flexible(
-              child: ListView.builder(
-                itemCount: categories.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return BoardButton(
-                      subtitle: subtitles[index],
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                PostListScreen(pageTitle: categories[index]),
-                          ),
-                        );
-                      },
-                      text: categories[index]);
-                },
-              ),
-            )
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          const Spacer(),
+          Expanded(
+            flex: 5,
+            child: ListView.builder(
+              itemCount: categories.length,
+              itemBuilder: (BuildContext context, int index) {
+                return BoardButton(
+                    subtitle: subtitles[index],
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PostListScreen(pageTitle: categories[index]),
+                        ),
+                      );
+                    },
+                    text: categories[index]);
+              },
+            ),
+          ),
+          const Spacer(),
+        ],
       ),
     );
   }
