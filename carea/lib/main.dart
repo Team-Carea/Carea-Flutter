@@ -26,9 +26,7 @@ class _App extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'NotoSans',
       ),
-      home: const DefaultLayout(
-        child: OnboardingScreen(),
-      ),
+      home: const SplashScreen(),
     );
   }
 }

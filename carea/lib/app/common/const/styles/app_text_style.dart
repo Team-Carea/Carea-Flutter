@@ -23,6 +23,12 @@ const inputTitleTextStyle = TextStyle(
   color: AppColors.darkGreenPrimaryColor,
 );
 
+const boardTitleTextStyle = TextStyle(
+  fontSize: 20,
+  fontWeight: FontWeight.w600,
+  color: AppColors.darkGray,
+);
+
 const screenContentTitleTextStyle = TextStyle(
   fontSize: 20,
   fontWeight: FontWeight.w700,
