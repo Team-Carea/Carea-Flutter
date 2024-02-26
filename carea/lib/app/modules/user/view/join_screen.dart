@@ -29,6 +29,10 @@ class _JoinScreenState extends State<JoinScreen> {
     UserService userService = UserService();
 
     return DefaultLayout(
+      appbar: AppBar(
+        centerTitle: true,
+        title: const Text('회원 가입'),
+      ),
       child: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: SafeArea(
@@ -39,9 +43,9 @@ class _JoinScreenState extends State<JoinScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: getScreenWidth(context) * 0.06),
+                SizedBox(height: getScreenWidth(context) * 0.01),
                 _Title(),
-                SizedBox(height: getScreenWidth(context) * 0.2),
+                SizedBox(height: getScreenWidth(context) * 0.18),
                 const Text(
                   '닉네임',
                   style: inputTitleTextStyle,
@@ -126,19 +130,15 @@ class _JoinScreenState extends State<JoinScreen> {
 class _Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(height: getScreenWidth(context) * 0.04),
-        const Text(
-          "회원 가입",
-          style: joinTitleTextStyle,
-        ),
-        const Divider(
+        Divider(
           color: AppColors.greenPrimaryColor,
           thickness: 8,
         ),
-        const Text(
+        SizedBox(height: 6),
+        Text(
           '당신을 소개할 수 있는 프로필을 만들어주세요',
           style: descriptionTextStyle,
         )

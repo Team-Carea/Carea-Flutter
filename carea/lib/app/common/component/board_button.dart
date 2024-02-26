@@ -24,7 +24,7 @@ class BoardButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
-            foregroundColor: AppColors.black,
+            foregroundColor: AppColors.middleGray,
             backgroundColor: AppColors.faintGray,
             side: const BorderSide(color: AppColors.lightGray),
             shape: RoundedRectangleBorder(

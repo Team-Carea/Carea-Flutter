@@ -158,7 +158,7 @@ class _PostListScreenState extends State<PostListScreen> {
         onPressed: () {
           _navigateAndCreatePost();
         },
-        backgroundColor: AppColors.yellowPrimaryColor,
+        backgroundColor: AppColors.greenPrimaryColor,
         child: const Icon(
           Icons.add,
           color: AppColors.white,

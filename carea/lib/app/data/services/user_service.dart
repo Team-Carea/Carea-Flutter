@@ -1,3 +1,4 @@
+import 'package:carea/app/common/component/toast_popup.dart';
 import 'package:carea/app/common/const/config.dart';
 import 'package:carea/app/common/util/auth_storage.dart';
 import 'package:carea/app/data/models/user_model.dart';
@@ -41,10 +42,10 @@ class UserService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       } else {
-        print('Failed to login: ${response.data}');
+        careaToast(toastMsg: 'Failed to login: ${response.data}');
       }
     } catch (e) {
-      throw Exception('Failed to login: $e');
+      careaToast(toastMsg: '아이디 또는 비밀번호가 틀렸습니다.');
     }
     return false;
   }
